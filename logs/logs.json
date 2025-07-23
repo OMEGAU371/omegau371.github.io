@@ -1,0 +1,42 @@
+[
+  {
+    "title": "更新日志 v1.0.7",
+    "date": "2025-07-23",
+    "content": [
+      {
+        "type": "delete",
+        "title": "删除内容",
+        "items": [
+          "删除“机械动力：简单发电机”模组。"
+        ]
+      },
+      {
+        "type": "fix",
+        "title": "修复内容",
+        "items": [
+          "可能修复了启动未响应错误。"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "更新日志 v1.0.6",
+    "date": "2025-07-22",
+    "content": [
+      {
+        "type": "add",
+        "title": "新增内容",
+        "items": [
+          "新增“机械动力：简单发电机”模组。"
+        ]
+      }
+    ],
+        "buttons": [
+      {
+        "icon": "zap",
+        "text": "【机械动力：简单发电机】create_simple_generator-1.0.8-1.21.1.jar",
+        "link": "https://cdn.modrinth.com/data/aUM6iEVi/versions/NTKCUZNy/create_simple_generator-1.0.8-1.21.1.jar"
+      }
+    ]
+  }
+]
