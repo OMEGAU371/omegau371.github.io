@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整合包安装与游玩指南</title>
+    <link rel="icon" href="icon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root {
+            --bg-color: #111827;
+            --card-bg-color: rgba(31, 41, 55, 0.5);
+            --card-hover-bg-color: rgba(55, 65, 81, 0.7);
+            --text-color: #d1d5db;
+            --accent-color: #38bdf8;
+            --border-color: rgba(55, 65, 81, 0.8);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        .menu-item {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            background-color: var(--card-hover-bg-color);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+            border-color: var(--accent-color);
+        }
+        .menu-item .menu-item-arrow {
+            transition: transform 0.3s ease;
+        }
+        .menu-item:hover .menu-item-arrow {
+            transform: translateX(5px);
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-box {
+            transition: all 0.3s ease;
+        }
+        .modal-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modal-hidden .modal-box {
+            transform: scale(0.95) translateY(-20px);
+        }
+        
+        @keyframes slide-out-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-50px); opacity: 0; } }
+        @keyframes slide-in-right { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slide-out-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(50px); opacity: 0; } }
+        @keyframes slide-in-left { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .slide-out-left { animation: slide-out-left 0.3s ease-in-out forwards; }
+        .slide-in-right { animation: slide-in-right 0.3s ease-in-out forwards; }
+        .slide-out-right { animation: slide-out-right 0.3s ease-in-out forwards; }
+        .slide-in-left { animation: slide-in-left 0.3s ease-in-out forwards; }
+
+        .toc-active { color: var(--accent-color) !important; font-weight: 600; }
+        #toc-indicator { position: absolute; left: -1px; width: 3px; background-color: var(--accent-color); border-radius: 99px; transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toc-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .toc-expanded .toc-content { max-height: 500px; }
+        .toc-expanded .toc-arrow { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="min-h-screen">
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full z-[-1] filter blur-3xl opacity-50"></canvas>
+
+    <div id="app-container" class="w-full p-4">
+        <div id="main-menu" class="max-w-3xl mx-auto">
+            <header class="text-center my-12">
+                <h1 class="text-5xl font-bold text-white mb-3">整合包指南</h1>
+                <p class="text-lg text-gray-400">一个为随心话社服务器玩家准备的教程</p>
+            </header>
+
+            <div class="space-y-4">
+                <div id="btn-preface" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="book-open" class="mr-4 text-sky-400"></i>必读前言</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                <div id="btn-install" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="download" class="mr-4 text-sky-400"></i>首次安装指南</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="btn-update" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="refresh-cw" class="mr-4 text-sky-400"></i>更新指南</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                    <div id="btn-changelog" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="file-text" class="mr-4 text-sky-400"></i>更新日志</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="btn-faq" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="help-circle" class="mr-4 text-sky-400"></i>常见问题 (FAQ)</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                    <div id="btn-resources" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="package-open" class="mr-4 text-sky-400"></i>资源获取</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://qm.qq.com/cgi-bin/qm/qr?k=A6P53uEWBUcQsOfhsTScLmHcME2laEjW&jump_from=webapi&authKey=I2v3ix6kH7aCzwZ1GQDDKy8GwW0+h9RHTSLaggxicBAR6euVFpHFNBUfNjXvkQ9I" target="_blank" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="message-circle" class="mr-4 text-sky-400"></i>随心话社 (主群)</span><i data-lucide="external-link" class="text-gray-400"></i></a>
+                    <a href="https://qm.qq.com/cgi-bin/qm/qr?k=EgCAjMaBARmIR4AucQoR7T6eJSQTnbiN&jump_from=webapi&authKey=lTBsG/ZYnGpYQ9uuBqKQwmZrrGxBouQC0FPxSx7IdK/lz0/BFV+DuSl9UjZsz8Ep" target="_blank" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="archive" class="mr-4 text-sky-400"></i>档案馆 (副群)</span><i data-lucide="external-link" class="text-gray-400"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="page-container" class="hidden max-w-5xl mx-auto"></div>
+    </div>
+
+    <div id="preface-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
+        <div class="modal-bg fixed inset-0 bg-black/50 backdrop-blur-lg"></div>
+        <div class="modal-box bg-gray-800/80 backdrop-blur-xl rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700">
+            <div class="sticky top-0 bg-gray-800/80 backdrop-blur-sm p-6 border-b border-gray-700 flex justify-between items-center"><h2 class="text-2xl font-bold text-white flex items-center"><i data-lucide="book-open" class="mr-3"></i>必读前言</h2><button id="btn-close-preface" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="x"></i></button></div>
+            <div class="p-8 space-y-6">
+                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="alert-triangle" class="mr-2 text-yellow-400"></i>适配平台</h3><p class="text-gray-300">本整合包为 <strong class="text-sky-400">PC Java版</strong> 专属，请使用电脑进行游玩。</p></div>
+                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="smartphone" class="mr-2 text-red-400"></i>关于手机游玩</h3><p class="text-gray-300">理论上可以通过串流软件在手机上游玩，但由于整合包对性能要求较高，手机玩家会遇到极其严重的卡顿、掉帧和操作延迟，我们<strong class="text-red-500">不推荐</strong>此种方式。</p></div>
+                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="user-check" class="mr-2 text-green-400"></i>账号说明</h3><p class="text-gray-300">无论您是否拥有《我的世界》正版账号，都可以通过我们推荐的启动器登录服务器。</p></div>
+            </div>
+        </div>
+    </div>
+    <div id="faq-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
+        <div class="modal-bg fixed inset-0 bg-black/50 backdrop-blur-lg"></div>
+        <div class="modal-box bg-gray-800/80 backdrop-blur-xl rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700">
+            <div class="sticky top-0 bg-gray-800/80 backdrop-blur-sm p-6 border-b border-gray-700 flex justify-between items-center"><h2 class="text-2xl font-bold text-white flex items-center"><i data-lucide="help-circle" class="mr-3"></i>常见问题解答</h2><button id="btn-close-faq" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="x"></i></button></div>
+            <div class="p-8 space-y-6">
+                <div><h3 class="font-semibold text-lg text-white mb-2">Q1: PCL2 启动器被杀毒软件报毒/删除了怎么办？</h3><p class="text-gray-300">A: 这是正常现象。PCL2是第三方启动器，没有数字签名，部分杀毒软件会误报。请放心使用。如果文件被删除，请暂时关闭杀毒软件（如Windows Defender的“实时保护”），重新下载PCL2，并将其设置为信任或排除项。</p></div>
+                <div><h3 class="font-semibold text-lg text-white mb-2">Q2: 启动游戏时长时间未响应（卡在加载界面）怎么办？</h3><p class="text-gray-300">A: 这是大型整合包加载时的正常现象，尤其是在第一次启动时。根据电脑配置，请耐心等待5-15分钟。如果长时间没有反应或直接闪退，请到主群 (`775113798`) 反馈，并附上您的电脑配置（CPU、内存、显卡），方便我们协助您解决问题。</p></div>
+                <div><h3 class="font-semibold text-lg text-white mb-2">Q3: 游戏启动后崩溃了怎么办？</h3><p class="text-gray-300">A: 首先尝试在PCL2中为整合包分配更多内存（推荐4GB-8GB）。如果问题依旧，请在群里求助，并附上整合包 `logs` 文件夹中的最新日志文件 (`latest.log`)，方便我们定位问题。</p></div>
+            </div>
+        </div>
+    </div>
+    <div id="image-viewer-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
+        <div class="modal-bg fixed inset-0 bg-black/80 backdrop-blur-lg"></div>
+        <div class="relative max-w-4xl max-h-[90vh]">
+            <img id="enlarged-image" src="" alt="放大的图片" class="modal-box block max-w-full max-h-full rounded-lg shadow-xl">
+            <button id="btn-close-image" class="absolute -top-4 -right-4 text-white bg-gray-800/80 rounded-full p-2"><i data-lucide="x"></i></button>
+        </div>
+    </div>
+    <div id="toc-widget" class="fixed top-8 right-8 z-40 bg-gray-800/80 backdrop-blur-md border border-gray-700 rounded-xl p-4 transition-all duration-300 opacity-0 invisible">
+        <div id="toc-header" class="flex justify-between items-center cursor-pointer px-4 py-2">
+            <h3 class="text-lg font-semibold text-white">目录</h3>
+            <i data-lucide="chevron-down" class="toc-arrow transition-transform"></i>
+        </div>
+        <div class="toc-content">
+            <ul id="toc-list" class="relative space-y-1 mt-2 border-l-2 border-gray-700"></ul>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainMenu = document.getElementById('main-menu');
+            const pageContainer = document.getElementById('page-container');
+            const animationDuration = 300;
+
+            const logFile = 'logs/logs.json'; 
+            const resourceFile = 'resources/resources.json';
+
+
+            const pages = {
+                install: {
+                    title: '首次安装指南',
+                    content: `
+                        <div class="space-y-8">
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/install_1.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="下载文件示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">1</div><h2 id="step1" class="text-2xl font-bold text-white">下载必要文件</h2></div>
+                                <p class="text-gray-300 mb-2">万事开头难，但我们已经为您准备好了一切。要开始游戏，您需要两个核心文件：<strong>启动器</strong> 和 <strong>整合包</strong>。</p>
+                                <p class="text-gray-300 mb-4">它们都存放在我们的“档案馆”QQ群文件中，这是一个专门用来存放服务器资源的仓库。</p>
+                                <ul class="space-y-3 mt-4">
+                                    <li class="flex items-start"><i data-lucide="folder-down" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>首先，你需要进入 <strong>档案馆QQ群</strong>。如果你还没加群，请先返回主菜单点击链接加入。</span></li>
+                                    <li class="flex items-start"><i data-lucide="mouse-pointer-click" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在群聊界面顶部，找到并点击 <strong>“文件”</strong> 选项卡，进入群文件列表。</span></li>
+                                    <li class="flex items-start"><i data-lucide="binary" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在 <code>联机工具</code> 文件夹中，下载名为 <code>PCL2启动器.exe</code> 的文件。这是我们的游戏启动器。</span></li>
+                                    <li class="flex items-start"><i data-lucide="package-zip" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>接着，在 <code>整合包</code> 文件夹中，下载最新的整合包压缩文件（通常以 <code>.zip</code> 结尾）。</span></li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/install_2.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="配置启动器示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">2</div><h2 id="step2" class="text-2xl font-bold text-white">配置启动器</h2></div>
+                                <p class="text-gray-300 mb-4">PCL2是一款功能强大且备受好评的第三方启动器。首次运行它时，我们需要进行简单的账户设置来告诉它“你是谁”。</p>
+                                <ul class="space-y-3 mt-4">
+                                    <li class="flex items-start"><i data-lucide="user-check" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-green-400"></i><span><strong>如果您是正版玩家</strong>：点击启动器主界面的“添加账户”，在弹出的窗口中选择“微软登录”，然后按照网页提示完成您的正版账号登录验证。</span></li>
+                                    <li class="flex items-start"><i data-lucide="user-cog" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-yellow-400"></i><span><strong>如果您是离线玩家</strong>：同样点击“添加账户”，但选择“离线模式”。在输入框中填入一个你喜欢的、将在游戏中显示的名字（游戏ID），然后点击确定即可。</span></li>
+                                </ul>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/install_3.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="导入整合包示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">3</div><h2 id="step3" class="text-2xl font-bold text-white">“拖拽”式一键安装</h2></div>
+                                <p class="text-gray-300 mb-4">这是最关键、也是最神奇的一步！你不需要解压任何文件，PCL2启动器会为你处理好一切。</p>
+                                <p class="text-gray-300 mb-4">请直接用鼠标左键按住你下载好的 <code>整合包.zip</code> 文件，将它 <strong>拖拽</strong> 到PCL2启动器的主窗口区域内，然后松开鼠标。启动器会自动识别并弹出一个安装界面，你只需确认安装即可。</p>
+                                <div class="bg-yellow-900/50 border-l-4 border-yellow-400 p-4 my-4 rounded-r-lg flex items-start"><i data-lucide="alert-triangle" class="w-5 h-5 mr-3 text-yellow-400 flex-shrink-0 mt-1"></i><span><strong>请注意：</strong> 此过程会下载游戏本体、加载器和所有模组，根据你的网络情况，可能需要较长时间。如果下载速度异常缓慢，请前往 <strong>PCL2设置 -> 下载</strong> 页面，尝试将“下载源”切换为“官方”或“镜像”。</span></div>
+                            </div>
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/install_4.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="加入服务器示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">4</div><h2 id="step4" class="text-2xl font-bold text-white">加入服务器，开始冒险！</h2></div>
+                                <p class="text-gray-300 mb-4">一切就绪，欢迎来到我们的世界！</p>
+                                <ul class="space-y-3 mt-4">
+                                    <li class="flex items-start"><i data-lucide="clipboard-copy" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在 <strong>档案馆QQ群</strong> 的 <strong>“群公告”</strong> 中找到最新的服务器IP地址，并复制它。</span></li>
+                                    <li class="flex items-start"><i data-lucide="play-circle" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在PCL2中选择我们安装好的整合包版本，点击 <strong>“启动游戏”</strong>。</span></li>
+                                    <li class="flex items-start"><i data-lucide="server" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在游戏主菜单，依次点击 <strong>“多人游戏”</strong> -> <strong>“添加服务器”</strong>，将刚才复制的IP地址粘贴到“服务器地址”一栏，然后点击“完成”即可加入！</span></li>
+                                </ul>
+                            </div>
+                        </div>`
+                },
+                update: {
+                    title: '整合包更新指南',
+                    content: `
+                        <div class="space-y-8">
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/update_1.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="更新须知示意图" ><h2 id="update-intro" class="text-2xl font-bold text-white mb-4 flex items-center"><i data-lucide="info" class="mr-3 text-sky-400"></i>更新须知</h2><p class="text-gray-300">为了修复Bug或增加新内容，我们会不定期更新整合包。<strong>请务必留意群公告中的更新日志</strong>，并严格按照日志的要求进行操作。不正确的更新可能会导致你的存档损坏或无法进入服务器！</p></div>
+                            <div class="bg-gray-900/50 border border-gray-700 rounded-xl p-6"><img src="./images/update_2.png" class="w-full rounded-lg mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="更新方式示意图" ><h2 id="update-methods" class="text-2xl font-bold text-white mb-4 flex items-center"><i data-lucide="settings-2" class="mr-3 text-sky-400"></i>模组管理</h2><p class="text-gray-300 mb-4">所有更新操作都在PCL2启动器中完成。在版本列表中右键点击我们的整合包，选择 <strong>“版本设置”</strong>，然后切换到 <strong>“Mod管理”</strong> 标签页。在这里，你可以看到所有已安装的模组。</p><ul class="space-y-3 mt-4">
+                                    <li class="flex items-start"><i data-lucide="plus-circle" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-green-400"></i><span><strong>添加新模组</strong>：如果更新日志要求添加新模组，请先在 <code>档案馆 -> 群文件 -> 追加模组</code> 文件夹中下载对应的文件。然后，只需将下载好的 <code>.jar</code> 文件拖拽进PCL2的Mods管理窗口即可。</span></li>
+                                    <li class="flex items-start"><i data-lucide="trash-2" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-red-400"></i><span><strong>删除旧模组</strong>：如果更新日志要求删除某个模组，只需在Mods列表中找到它，右键点击并选择 <strong>“删除文件”</strong>。</span></li>
+                                    <li class="flex items-start"><i data-lucide="refresh-cw" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-yellow-400"></i><span><strong>更新现有模组</strong>：PCL2自带便捷的模组更新功能。你可以在Mods管理界面选中需要更新的模组，点击上方的“更新”按钮尝试自动更新。如果自动更新失败，则需要手动下载新版模组文件，然后删除旧版、拖入新版。</span></li>
+                                </ul>
+                            </div>
+                        </div>`
+                }
+            };
+            
+            const tocWidget = document.getElementById('toc-widget');
+
+            async function fetchData(filePath) {
+                try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} for ${filePath}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error(`Error fetching ${filePath}:`, error);
+                    return null;
+                }
+            }
+
+            function navigate(hash) {
+                const cleanHash = hash.replace('#', '').toLowerCase();
+                
+                if (mainMenu.classList.contains('hidden') && !cleanHash) {
+                    showMainMenu();
+                    return;
+                }
+
+                switch (cleanHash) {
+                    case 'install': showPage('install'); break;
+                    case 'update': showPage('update'); break;
+                    case 'changelog': showChangelog(); break;
+                    case 'resources': showResources(); break;
+                    default: if (!mainMenu.classList.contains('hidden')) { } else { showMainMenu(); } break;
+                }
+            }
+
+            function showPage(pageKey) {
+                const pageData = pages[pageKey];
+                if (!pageData) return;
+                window.location.hash = pageKey;
+
+                mainMenu.classList.add('slide-out-left');
+                setTimeout(() => {
+                    mainMenu.classList.add('hidden');
+                    mainMenu.classList.remove('slide-out-left');
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = pageData.content;
+                    const headings = tempDiv.querySelectorAll('h2');
+                    let tocHtml = '';
+                    headings.forEach(h => {
+                        tocHtml += `<li><a href="#${h.id}" class="toc-link block py-2 px-4 rounded-md text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors">${h.textContent}</a></li>`;
+                    });
+
+                    pageContainer.innerHTML = `
+                        <div class="flex items-center mb-6">
+                            <button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button>
+                            <h1 class="text-3xl font-bold text-white">${pageData.title}</h1>
+                        </div>
+                        <div id="wiki-content" class="w-full">
+                            ${pageData.content}
+                        </div>
+                    `;
+                    tocWidget.querySelector('#toc-list').innerHTML = tocHtml;
+                    
+                    pageContainer.classList.remove('hidden');
+                    pageContainer.classList.add('slide-in-right');
+                    tocWidget.classList.remove('opacity-0', 'invisible');
+
+                    document.getElementById('btn-back').addEventListener('click', () => window.location.hash = '');
+                    lucide.createIcons();
+                    setupTocObserver();
+                    setTimeout(() => pageContainer.classList.remove('slide-in-right'), animationDuration);
+                }, animationDuration);
+            }
+            
+            function showMainMenu() {
+                pageContainer.classList.add('slide-out-right');
+                tocWidget.classList.add('opacity-0', 'invisible');
+                setTimeout(() => {
+                    pageContainer.classList.add('hidden');
+                    pageContainer.classList.remove('slide-out-right');
+                    mainMenu.classList.remove('hidden');
+                    mainMenu.classList.add('slide-in-left');
+                    setTimeout(() => mainMenu.classList.remove('slide-in-left'), animationDuration);
+                }, animationDuration);
+            }
+            
+            function parseContentString(text) {
+                const linkRegex = /<\/i-link:\[\((.*?)\)(.*?)\];\[(.*?)\]>/g;
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code class="bg-gray-700 text-gray-200 px-1.5 py-0.5 rounded-md text-sm">$1</code>')
+                    .replace(linkRegex, (match, icon, text, link) => {
+                        return `<a href="${link}" target="_blank" class="inline-flex items-center text-sky-400 hover:text-sky-300 transition-colors font-medium"><i data-lucide="${icon}" class="w-4 h-4 mr-1.5"></i>${text}</a>`;
+                    });
+            }
+
+            function renderButtons(buttons) {
+                let buttonsHtml = '';
+                if (buttons && Array.isArray(buttons) && buttons.length > 0) {
+                    if (buttons.length === 1) {
+                        buttonsHtml += `<div class="flex justify-center mt-4">`;
+                        const btn = buttons[0];
+                        const displayIcon = btn.icon || 'download';
+                        const externalLinkIcon = btn.showExternalLinkIcon ? `<i data-lucide="square-arrow-out-up-right" class="w-5 h-5 text-gray-400"></i>` : `<i data-lucide="download" class="w-5 h-5 text-gray-400"></i>`;
+                        buttonsHtml += `<a href="${btn.link}" target="_blank" class="bg-gray-700/50 hover:bg-gray-700 p-4 rounded-lg flex items-center justify-between transition-colors w-full">
+                            <span class="flex items-center">
+                                <i data-lucide="${displayIcon}" class="w-6 h-6 mr-4 text-sky-400"></i>
+                                <div class="font-semibold text-white">${btn.text}</div>
+                            </span>
+                            ${externalLinkIcon}
+                        </a>`;
+                        buttonsHtml += `</div>`;
+                    } else {
+                        buttonsHtml += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">';
+                        buttons.forEach(btn => {
+                            const displayIcon = btn.icon || 'download';
+                            const externalLinkIcon = btn.showExternalLinkIcon ? `<i data-lucide="square-arrow-out-up-right" class="w-5 h-5 text-gray-400"></i>` : `<i data-lucide="download" class="w-5 h-5 text-gray-400"></i>`;
+                            buttonsHtml += `<a href="${btn.link}" target="_blank" class="bg-gray-700/50 hover:bg-gray-700 p-4 rounded-lg flex items-center justify-between transition-colors">
+                                <span class="flex items-center">
+                                    <i data-lucide="${displayIcon}" class="w-6 h-6 mr-4 text-sky-400"></i>
+                                    <div class="font-semibold text-white">${btn.text}</div>
+                                </span>
+                                ${externalLinkIcon}
+                            </a>`;
+                        });
+                        buttonsHtml += '</div>';
+                    }
+                }
+                return buttonsHtml;
+            }
+
+
+            async function showChangelog() {
+                window.location.hash = 'changelog';
+                const logDataArray = await fetchData(logFile);
+
+                mainMenu.classList.add('slide-out-left');
+                setTimeout(() => {
+                    mainMenu.classList.add('hidden');
+                    mainMenu.classList.remove('slide-out-left');
+
+                    let logsHtml = '';
+                    if (!logDataArray || !Array.isArray(logDataArray) || logDataArray.length === 0) {
+                        logsHtml = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-lg border border-gray-700 text-center"><i data-lucide="archive-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">暂无更新日志</h3><p class="mt-1 text-sm text-gray-400">所有内容都是最新的！</p></div>`;
+                    } else {
+                        const sortedLogEntries = [...logDataArray].sort((a, b) => {
+                            const dateA = new Date(a.date || '1970-01-01'); 
+                            const dateB = new Date(b.date || '1970-01-01');
+                            return dateB - dateA; 
+                        });
+
+                        for (const entry of sortedLogEntries) {
+                            const displayTitle = entry.title || '无标题日志'; 
+                            const displayDate = entry.date ? `<span class="text-sm text-gray-400 font-normal ml-2">${entry.date}</span>` : '';
+
+                            let contentHtml = '';
+                            if (entry.content && Array.isArray(entry.content)) {
+                                entry.content.forEach(section => {
+                                    const iconMap = { add: 'plus-circle', fix: 'wrench', delete: 'trash-2' };
+                                    const colorMap = { add: 'text-green-400', fix: 'text-yellow-400', delete: 'text-red-400' };
+                                    contentHtml += `<h3 class="text-lg font-semibold ${colorMap[section.type]} flex items-center mt-4 mb-2"><i data-lucide="${iconMap[section.type]}" class="mr-2"></i>${section.title}</h3>`;
+                                    contentHtml += '<ul class="space-y-2">';
+                                    section.items.forEach(item => {
+                                        contentHtml += `<li class="flex items-start"><i data-lucide="dot" class="w-4 h-4 mr-2 mt-1 flex-shrink-0 text-gray-500"></i><span>${parseContentString(item)}</span></li>`;
+                                    });
+                                    contentHtml += '</ul>';
+                                });
+                            }
+
+                            const buttonsHtml = renderButtons(entry.buttons);
+
+
+                            logsHtml += `<div class="bg-gray-800/80 backdrop-blur-md p-6 rounded-lg border border-gray-700">
+                                <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-600 pb-3">${displayTitle} ${displayDate}</h2>
+                                <div>${contentHtml}</div>
+                                ${buttonsHtml}
+                            </div>`;
+                        }
+                    }
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">更新日志</h1></div><div class="space-y-6">${logsHtml}</div>`;
+                    
+                    pageContainer.classList.remove('hidden');
+                    pageContainer.classList.add('slide-in-right');
+                    tocWidget.classList.add('opacity-0', 'invisible');
+                    document.getElementById('btn-back').addEventListener('click', () => window.location.hash = '');
+                    lucide.createIcons();
+                    setTimeout(() => pageContainer.classList.remove('slide-in-right'), animationDuration);
+                }, animationDuration);
+            }
+            
+            async function showResources() {
+                window.location.hash = 'resources';
+                const resourceDataArray = await fetchData(resourceFile);
+
+                mainMenu.classList.add('slide-out-left');
+                setTimeout(() => {
+                    mainMenu.classList.add('hidden');
+                    mainMenu.classList.remove('slide-out-left');
+
+                    let resourcesHtml = '';
+                    if (!resourceDataArray || !Array.isArray(resourceDataArray) || resourceDataArray.length === 0) {
+                        resourcesHtml = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-lg border border-gray-700 text-center"><i data-lucide="package-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">暂无资源</h3><p class="mt-1 text-sm text-gray-400">资源正在准备中，请稍后查看。</p></div>`;
+                    } else {
+                        for (const entry of resourceDataArray) {
+                            if (!entry) continue;
+                            
+                            const displayTitle = entry.title || '无标题资源'; 
+                            const displayDate = entry.date ? `<span class="text-sm text-gray-400 font-normal ml-2">${entry.date}</span>` : '';
+
+                            const buttonsHtml = renderButtons(entry.buttons);
+
+                            resourcesHtml += `<div class="bg-gray-800/80 backdrop-blur-md p-6 rounded-lg border border-gray-700">
+                                <h2 class="text-xl font-bold text-white">${displayTitle} ${displayDate}</h2>
+                                <p class="text-gray-400 mt-1">${entry.description || ''}</p>
+                                ${buttonsHtml}
+                            </div>`;
+                        }
+                    }
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">资源获取</h1></div><div class="space-y-6">${resourcesHtml}</div>`;
+                    
+                    pageContainer.classList.remove('hidden');
+                    pageContainer.classList.add('slide-in-right');
+                    tocWidget.classList.add('opacity-0', 'invisible');
+                    document.getElementById('btn-back').addEventListener('click', () => window.location.hash = '');
+                    lucide.createIcons();
+                    setTimeout(() => pageContainer.classList.remove('slide-in-right'), animationDuration);
+                }, animationDuration);
+            }
+            
+            function setupTocObserver() {
+                if (!tocWidget) return;
+                
+                document.getElementById('toc-header').addEventListener('click', () => {
+                    tocWidget.classList.toggle('toc-expanded');
+                });
+
+                const tocList = document.getElementById('toc-list');
+                const indicator = document.createElement('div');
+                indicator.id = 'toc-indicator';
+                tocList.style.position = 'relative';
+                tocList.prepend(indicator);
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const id = entry.target.getAttribute('id');
+                        const tocLink = tocList.querySelector(`a[href="#${id}"]`);
+                        if (entry.isIntersecting && tocLink) {
+                            document.querySelectorAll('.toc-link').forEach(link => link.classList.remove('toc-active'));
+                            tocLink.classList.add('toc-active');
+                            indicator.style.top = `${tocLink.offsetTop}px`;
+                            indicator.style.height = `${tocLink.offsetHeight}px`;
+                        }
+                    });
+                }, { rootMargin: "-40% 0px -60% 0px", threshold: 0 });
+
+                document.querySelectorAll('#wiki-content h2').forEach(section => {
+                    observer.observe(section);
+                });
+                
+                tocList.addEventListener('click', (e) => {
+                    if (e.target.closest('.toc-link')) {
+                        e.preventDefault();
+                        const targetId = e.target.closest('.toc-link').getAttribute('href');
+                        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+
+            const prefaceModal = document.getElementById('preface-modal');
+            const faqModal = document.getElementById('faq-modal');
+            const imageViewerModal = document.getElementById('image-viewer-modal');
+            const enlargedImage = document.getElementById('enlarged-image');
+
+            function toggleModal(modal, show, src = null) {
+                if (show) {
+                    if (modal === imageViewerModal && src) {
+                        enlargedImage.setAttribute('src', src);
+                    }
+                    modal.classList.remove('modal-hidden');
+                } else {
+                    modal.classList.add('modal-hidden');
+                }
+            }
+            
+            document.getElementById('btn-preface').addEventListener('click', () => toggleModal(prefaceModal, true));
+            document.getElementById('btn-close-preface').addEventListener('click', () => toggleModal(prefaceModal, false));
+            prefaceModal.querySelector('.modal-bg').addEventListener('click', () => toggleModal(prefaceModal, false));
+            
+            document.getElementById('btn-faq').addEventListener('click', () => toggleModal(faqModal, true));
+            document.getElementById('btn-close-faq').addEventListener('click', () => toggleModal(faqModal, false));
+            faqModal.querySelector('.modal-bg').addEventListener('click', () => toggleModal(faqModal, false));
+
+            document.getElementById('btn-close-image').addEventListener('click', () => toggleModal(imageViewerModal, false));
+            imageViewerModal.querySelector('.modal-bg').addEventListener('click', () => toggleModal(imageViewerModal, false));
+
+            pageContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('enlargeable-image')) {
+                    toggleModal(imageViewerModal, true, e.target.src);
+                }
+            });
+            
+            window.addEventListener('hashchange', () => navigate(window.location.hash));
+            navigate(window.location.hash);
+
+            document.getElementById('btn-install').addEventListener('click', () => window.location.hash = 'install');
+            document.getElementById('btn-update').addEventListener('click', () => window.location.hash = 'update');
+            document.getElementById('btn-changelog').addEventListener('click', () => window.location.hash = 'changelog');
+            document.getElementById('btn-resources').addEventListener('click', () => window.location.hash = 'resources');
+
+            lucide.createIcons();
+
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles;
+
+            function setup() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                particles = [];
+                const particleCount = 20;
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.2,
+                        vy: (Math.random() - 0.5) * 0.2,
+                        radius: Math.random() * 100 + 50,
+                        color: `rgba(${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 100) + 50}, ${Math.floor(Math.random() * 155) + 100}, ${Math.random() * 0.3 + 0.1})`
+                    });
+                }
+            }
+
+            function draw() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < -p.radius || p.x > width + p.radius) p.vx *= -1;
+                    if (p.y < -p.radius || p.y > height + p.radius) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            
+            window.addEventListener('resize', setup);
+            setup();
+            draw();
+        });
+    </script>
+</body>
+</html>
