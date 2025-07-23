@@ -1,0 +1,32 @@
+[
+  {
+    "title": "主要资源",
+    "date": "2025-07-23",
+    "description": "日常维护、更新资源。",
+    "buttons": [
+      {
+        "icon": "folder-archive",
+        "text": "The Origin 1.0.7",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/3/The%20Origin%202.0%201.0.7.zip"
+      },
+      {
+        "icon": "binoculars",
+        "text": "译作重质-本源2.0 v7",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/2/%E8%AF%91%E4%BD%9C%E9%87%8D%E8%B4%A8%207.0.zip"
+      }
+    ]
+  },
+  {
+    "title": "启动器",
+    "date": "2025-07-23",
+    "description": "最基础的整合包资源。",
+    "buttons": [
+      {
+        "icon": "gamepad-2",
+        "text": "PCL2 启动器下载",
+        "link": "https://bbsmc.net/software/pcl",
+        "showExternalLinkIcon": true 
+      }
+    ]
+  }
+]
