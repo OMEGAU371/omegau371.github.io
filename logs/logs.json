@@ -1,5 +1,5 @@
 [
-    {
+  {
     "title": "更新日志 v8 & 1.0.8",
     "date": "2025-07-25",
     "content": [
@@ -12,17 +12,19 @@
       },
       {
         "type": "change",
-        "title": "资源包内容变更"
-        "item": [
+        "title": "资源包内容变更",
+        "items": [
           "更新了“phr”字体。"
         ]
+      },
       {
         "type": "change",
-        "title": "整合包内容变更"
-        "item": [
+        "title": "整合包内容变更",
+        "items": [
           "将“机械动力：梦想与欲望”更新至“2.2a-BETA”。"
         ]
       }
+    ]
   },
   {
     "title": "整合包更新日志 v1.0.7",
@@ -56,7 +58,7 @@
         ]
       }
     ],
-        "buttons": [
+    "buttons": [
       {
         "icon": "zap",
         "text": "【机械动力：简单发电机】create_simple_generator-1.0.8-1.21.1.jar",
