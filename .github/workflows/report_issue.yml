@@ -1,0 +1,46 @@
+# .github/workflows/fetch_issues.yml
+name: Fetch GitHub Issues to JSON
+
+on:
+  # 每天凌晨 0 点 UTC 运行此工作流
+  schedule:
+    - cron: '0 0 * * *'
+  # 也可以手动触发
+  workflow_dispatch:
+
+jobs:
+  fetch_issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Issues
+        id: fetch_issues_data
+        uses: octokit/request-action@v2
+        with:
+          route: GET /repos/{owner}/{repo}/issues
+          owner: ${{ github.repository_owner }} # 您的 GitHub 用户名
+          repo: ${{ github.event.repository.name }} # 您的仓库名
+          # 过滤条件：获取所有 Issue，包括已关闭的
+          # state: all
+          # 可以添加更多过滤条件，例如只获取特定标签的 Issue
+          # labels: 'bug,website-feedback'
+          # per_page: 100 # 每页数量
+          # page: 1 # 页码
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # 使用之前设置的 GH_TOKEN Secret
+
+      - name: Save Issues to JSON
+        run: |
+          # 将获取到的 JSON 数据保存到 issues.json 文件
+          echo "${{ steps.fetch_issues_data.outputs.data }}" > issues.json
+
+      - name: Commit and push issues.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # 提交更改到仓库
+          commit_message: "Update issues.json with latest GitHub Issues data"
+          # 确保 Action 使用 GH_TOKEN 进行认证
+          token: ${{ secrets.GH_TOKEN }}
