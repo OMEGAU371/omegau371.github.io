@@ -5,6 +5,11 @@
     "description": "日常维护、更新资源。",
     "buttons": [
       {
+        "icon": "folder-archive",
+        "text": "The Origin 1.0.8",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/4/The%20Origin%202.0%201.0.8.zip"
+      },
+      {
         "icon": "binoculars",
         "text": "译作重质-本源2.0 v8",
         "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/4/%E8%AF%91%E4%BD%9C%E9%87%8D%E8%B4%A8-%E6%9C%AC%E6%BA%902.0%20v8.zip"
