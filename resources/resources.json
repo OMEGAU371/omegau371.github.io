@@ -1,4 +1,16 @@
 [
+    {
+    "title": "主要资源",
+    "date": "2025-07-23",
+    "description": "日常维护、更新资源。",
+    "buttons": [
+      {
+        "icon": "binoculars",
+        "text": "译作重质-本源2.0 v8",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/4/%E8%AF%91%E4%BD%9C%E9%87%8D%E8%B4%A8-%E6%9C%AC%E6%BA%902.0%20v8.zip"
+      }
+    ]
+  },
   {
     "title": "主要资源",
     "date": "2025-07-23",
