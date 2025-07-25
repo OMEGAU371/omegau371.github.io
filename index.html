@@ -15,6 +15,7 @@
             --text-color: #d1d5db;
             --accent-color: #38bdf8;
             --border-color: rgba(55, 65, 81, 0.8);
+            --skeleton-bg: rgba(55, 65, 81, 0.6);
         }
         html { scroll-behavior: smooth; }
         body {
@@ -41,14 +42,15 @@
             transition: all 0.3s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .menu-item:hover {
+        .menu-item:hover, .menu-item:focus-visible {
+            outline: none;
             transform: translateY(-5px);
             background-color: var(--card-hover-bg-color);
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
             border-color: var(--accent-color);
         }
         .menu-item .menu-item-arrow { transition: transform 0.3s ease; }
-        .menu-item:hover .menu-item-arrow { transform: translateX(5px); }
+        .menu-item:hover .menu-item-arrow, .menu-item:focus-visible .menu-item-arrow { transform: translateX(5px); }
         
         .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
         .modal-box { transition: all 0.3s ease; }
@@ -194,7 +196,6 @@
         #issue-body:focus + .input-label,
         #issue-body.has-content + .input-label { top: -9px !important; }
         
-        /* Textarea icon container - now holds both icons */
         .textarea-icon-container { 
              position: absolute; top: 18px; right: 18px; 
              width: 20px; height: 20px; z-index: 2;
@@ -213,20 +214,24 @@
             border-radius: 0 0 12px 12px;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Spreads out icons on wide screens */
             gap: 4px;
             z-index: 2;
+            overflow-x: auto; /* Enables horizontal scrolling on narrow screens */
+            scrollbar-width: none; /* For Firefox */
         }
-        #md-toolbar button { background: transparent; border: none; padding: 6px; border-radius: 6px; color: #9ca3af; cursor: pointer; transition: background-color 0.2s, color 0.2s; }
+        #md-toolbar::-webkit-scrollbar { display: none; }
+        #md-toolbar button { background: transparent; border: none; padding: 6px; border-radius: 6px; color: #9ca3af; cursor: pointer; transition: background-color 0.2s, color 0.2s; flex-shrink: 0; }
         #md-toolbar button:hover { background-color: rgba(55, 65, 81, 0.7); color: #fff; }
-        .spinner {
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            width: 1.25rem;
-            height: 1.25rem;
-            animation: spin 1s linear infinite;
+        
+        @keyframes pulse {
+          50% { opacity: .5; }
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .skeleton-loader {
+            background-color: var(--skeleton-bg);
+            border-radius: 1rem;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
 
     </style>
 </head>
@@ -243,20 +248,16 @@
             <div id="gallery-carousel" class="w-full relative rounded-2xl overflow-hidden shadow-lg mb-8 hidden"></div>
 
             <div class="space-y-4">
-                <div id="btn-preface" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="book-open" class="mr-4 text-sky-400"></i>必读前言</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
-                <div id="btn-install" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="download" class="mr-4 text-sky-400"></i>首次安装指南</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                <div id="btn-tutorials" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="book-open" class="mr-4 text-sky-400"></i>教程指南</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="btn-update" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="refresh-cw" class="mr-4 text-sky-400"></i>更新指南</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                     <div id="btn-changelog" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="file-text" class="mr-4 text-sky-400"></i>更新日志</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="btn-faq" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="help-circle" class="mr-4 text-emerald-400"></i>常见问题 (FAQ)</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                     <div id="btn-resources" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="package-open" class="mr-4 text-emerald-400"></i>资源获取</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="btn-report-issue" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="flame" class="mr-4 text-orange-400"></i>报告新问题</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
-                    <div id="btn-view-issues" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="shield-check" class="mr-4 text-indigo-400"></i>查看现有问题</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="btn-faq" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="help-circle" class="mr-4 text-emerald-400"></i>常见问题 (FAQ)</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
+                     <div id="btn-view-issues" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="shield-check" class="mr-4 text-indigo-400"></i>查看现有问题</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                 </div>
+                <div id="btn-report-issue" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="flame" class="mr-4 text-orange-400"></i>报告新问题</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <a href="https://qm.qq.com/cgi-bin/qm/qr?k=A6P53uEWBUcQsOfhsTScLmHcME2laEjW&jump_from=webapi&authKey=I2v3ix6kH7aCzwZ1GQDDKy8GwW0+h9RHTSLaggxicBAR6euVFpHFNBUfNjXvkQ9I" target="_blank" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="message-circle" class="mr-4 text-violet-400"></i>随心话社 (主群)</span><i data-lucide="external-link" class="text-gray-400"></i></a>
                     <a href="https://qm.qq.com/cgi-bin/qm/qr?k=EgCAjMaBARmIR4AucQoR7T6eJSQTnbiN&jump_from=webapi&authKey=lTBsG/ZYnGpYQ9uuBqKQwmZrrGxBouQC0FPxSx7IdK/lz0/BFV+DuSl9UjZsz8Ep" target="_blank" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="archive" class="mr-4 text-violet-400"></i>档案馆 (副群)</span><i data-lucide="external-link" class="text-gray-400"></i></a>
@@ -267,17 +268,6 @@
     </div>
 
     <!-- Modals -->
-    <div id="preface-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
-        <div class="modal-bg fixed inset-0 bg-black/50 backdrop-blur-lg"></div>
-        <div class="modal-box bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700">
-            <div class="sticky top-0 bg-gray-800/80 backdrop-blur-sm p-6 border-b border-gray-700 flex justify-between items-center"><h2 class="text-2xl font-bold text-white flex items-center"><i data-lucide="book-open" class="mr-3 text-sky-400"></i>必读前言</h2><button class="btn-close-modal text-gray-400 hover:text-white transition-colors"><i data-lucide="x"></i></button></div>
-            <div class="p-8 space-y-6">
-                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="alert-triangle" class="mr-2 text-yellow-400"></i>适配平台</h3><p class="text-gray-300">本整合包为 <strong class="text-sky-400">PC Java版</strong> 专属，请使用电脑进行游玩。</p></div>
-                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="smartphone" class="mr-2 text-red-400"></i>关于手机游玩</h3><p class="text-gray-300">理论上可以通过串流软件在手机上游玩，但由于整合包对性能要求较高，手机玩家会遇到极其严重的卡顿、掉帧和操作延迟，我们<strong class="text-red-500">不推荐</strong>此种方式。</p></div>
-                <div><h3 class="font-semibold text-lg text-white mb-2 flex items-center"><i data-lucide="user-check" class="mr-2 text-green-400"></i>账号说明</h3><p class="text-gray-300">无论您是否拥有《我的世界》正版账号，都可以通过我们推荐的启动器登录服务器。</p></div>
-            </div>
-        </div>
-    </div>
     <div id="faq-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
         <div class="modal-bg fixed inset-0 bg-black/50 backdrop-blur-lg"></div>
         <div class="modal-box bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-gray-700">
@@ -342,7 +332,6 @@
         </div>
     </div>
 
-
     <div id="toc-widget" class="fixed top-8 right-8 z-40 bg-gray-800/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4 transition-all duration-300 opacity-0 invisible">
         <div id="toc-header" class="flex justify-between items-center cursor-pointer px-4 py-2">
             <h3 class="text-lg font-semibold text-white">目录</h3>
@@ -361,98 +350,52 @@
             const pageContainer = document.getElementById('page-container');
             const tocWidget = document.getElementById('toc-widget');
             
-            // Constants
+            // Constants & State
             const animationDuration = 300;
-            const logFile = './logs/logs.json'; 
-            const resourceFile = './resources/resources.json';
-            const galleryFile = './gallery/gallery.json';
             const githubRepo = 'OMEGAU371/omegau371.github.io';
+            let animationFrameId = null;
 
-            const pages = {
-                install: {
-                    title: '首次安装指南',
-                    content: `
-                        <div class="space-y-8">
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/install_1.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="下载文件示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">1</div><h2 id="step1" class="text-2xl font-bold text-white">下载必要文件</h2></div>
-                                <p class="text-gray-300 mb-2">万事开头难，但我们已经为您准备好了一切。要开始游戏，您需要两个核心文件：<strong>启动器</strong> 和 <strong>整合包</strong>。</p>
-                                <p class="text-gray-300 mb-4">它们都存放在我们的“档案馆”QQ群文件中，这是一个专门用来存放服务器资源的仓库。</p>
-                                <ul class="space-y-3 mt-4">
-                                    <li class="flex items-start"><i data-lucide="folder-down" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>首先，你需要进入 <strong>档案馆QQ群</strong>。如果你还没加群，请先返回主菜单点击链接加入。</span></li>
-                                    <li class="flex items-start"><i data-lucide="mouse-pointer-click" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在群聊界面顶部，找到并点击 <strong>“文件”</strong> 选项卡，进入群文件列表。</span></li>
-                                    <li class="flex items-start"><i data-lucide="binary" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在 <code>联机工具</code> 文件夹中，下载名为 <code>PCL2启动器.exe</code> 的文件。这是我们的游戏启动器。</span></li>
-                                    <li class="flex items-start"><i data-lucide="package-zip" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>接着，在 <code>整合包</code> 文件夹中，下载最新的整合包压缩文件（通常以 <code>.zip</code> 结尾）。</span></li>
-                                </ul>
-                            </div>
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/install_2.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="配置启动器示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">2</div><h2 id="step2" class="text-2xl font-bold text-white">配置启动器</h2></div>
-                                <p class="text-gray-300 mb-4">PCL2是一款功能强大且备受好评的第三方启动器。首次运行它时，我们需要进行简单的账户设置来告诉它“你是谁”。</p>
-                                <ul class="space-y-3 mt-4">
-                                    <li class="flex items-start"><i data-lucide="user-check" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-green-400"></i><span><strong>如果您是正版玩家</strong>：点击启动器主界面的“添加账户”，在弹出的窗口中选择“微软登录”，然后按照网页提示完成您的正版账号登录验证。</span></li>
-                                    <li class="flex items-start"><i data-lucide="user-cog" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-yellow-400"></i><span><strong>如果您是离线玩家</strong>：同样点击“添加账户”，但选择“离线模式”。在输入框中填入一个你喜欢的、将在游戏中显示的名字（游戏ID），然后点击确定即可。</span></li>
-                                </ul>
-                            </div>
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/install_3.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="导入整合包示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">3</div><h2 id="step3" class="text-2xl font-bold text-white">“拖拽”式一键安装</h2></div>
-                                <p class="text-gray-300 mb-4">这是最关键、也是最神奇的一步！你不需要解压任何文件，PCL2启动器会为你处理好一切。</p>
-                                <p class="text-gray-300 mb-4">请直接用鼠标左键按住你下载好的 <code>整合包.zip</code> 文件，将它 <strong>拖拽</strong> 到PCL2启动器的主窗口区域内，然后松开鼠标。启动器会自动识别并弹出一个安装界面，你只需确认安装即可。</p>
-                                <div class="bg-yellow-900/50 border-l-4 border-yellow-400 p-4 my-4 rounded-r-2xl flex items-start"><i data-lucide="alert-triangle" class="w-5 h-5 mr-3 text-yellow-400 flex-shrink-0 mt-1"></i><span><strong>请注意：</strong> 此过程会下载游戏本体、加载器和所有模组，根据你的网络情况，可能需要较长时间。如果下载速度异常缓慢，请前往 <strong>PCL2设置 -> 下载</strong> 页面，尝试将“下载源”切换为“官方”或“镜像”。</span></div>
-                            </div>
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/install_4.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="加入服务器示意图" ><div class="flex items-center mb-4"><div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">4</div><h2 id="step4" class="text-2xl font-bold text-white">加入服务器，开始冒险！</h2></div>
-                                <p class="text-gray-300 mb-4">一切就绪，欢迎来到我们的世界！</p>
-                                <ul class="space-y-3 mt-4">
-                                    <li class="flex items-start"><i data-lucide="clipboard-copy" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在 <strong>档案馆QQ群</strong> 的 <strong>“群公告”</strong> 中找到最新的服务器IP地址，并复制它。</span></li>
-                                    <li class="flex items-start"><i data-lucide="play-circle" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在PCL2中选择我们安装好的整合包版本，点击 <strong>“启动游戏”</strong>。</span></li>
-                                    <li class="flex items-start"><i data-lucide="server" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-sky-400"></i><span>在游戏主菜单，依次点击 <strong>“多人游戏”</strong> -> <strong>“添加服务器”</strong>，将刚才复制的IP地址粘贴到“服务器地址”一栏，然后点击“完成”即可加入！</span></li>
-                                </ul>
-                            </div>
-                        </div>`
-                },
-                update: {
-                    title: '整合包更新指南',
-                    content: `
-                        <div class="space-y-8">
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/update_1.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="更新须知示意图" ><h2 id="update-intro" class="text-2xl font-bold text-white mb-4 flex items-center"><i data-lucide="info" class="mr-3 text-sky-400"></i>更新须知</h2><p class="text-gray-300">为了修复Bug或增加新内容，我们会不定期更新整合包。<strong>请务必留意群公告中的更新日志</strong>，并严格按照日志的要求进行操作。不正确的更新可能会导致你的存档损坏或无法进入服务器！</p></div>
-                            <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6"><img src="./images/update_2.png" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="更新方式示意图" ><h2 id="update-methods" class="text-2xl font-bold text-white mb-4 flex items-center"><i data-lucide="settings-2" class="mr-3 text-sky-400"></i>模组管理</h2><p class="text-gray-300 mb-4">所有更新操作都在PCL2启动器中完成。在版本列表中右键点击我们的整合包，选择 <strong>“版本设置”</strong>，然后切换到 <strong>“Mod管理”</strong> 标签页。在这里，你可以看到所有已安装的模组。</p><ul class="space-y-3 mt-4">
-                                    <li class="flex items-start"><i data-lucide="plus-circle" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-green-400"></i><span><strong>添加新模组</strong>：如果更新日志要求添加新模组，请先在 <code>档案馆 -> 群文件 -> 追加模组</code> 文件夹中下载对应的文件。然后，只需将下载好的 <code>.jar</code> 文件拖拽进PCL2的Mods管理窗口即可。</span></li>
-                                    <li class="flex items-start"><i data-lucide="trash-2" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-red-400"></i><span><strong>删除旧模组</strong>：如果更新日志要求删除某个模组，只需在Mods列表中找到它，右键点击并选择 <strong>“删除文件”</strong>。</span></li>
-                                    <li class="flex items-start"><i data-lucide="refresh-cw" class="h-5 w-5 mr-3 mt-1 flex-shrink-0 text-yellow-400"></i><span><strong>更新现有模组</strong>：PCL2自带便捷的模组更新功能。你可以在Mods管理界面选中需要更新的模组，点击上方的“更新”按钮尝试自动更新。如果自动更新失败，则需要手动下载新版模组文件，然后删除旧版、拖入新版。</span></li>
-                                </ul>
-                            </div>
-                        </div>`
-                }
-            };
-            
+            // --- Utility Functions ---
             async function fetchData(filePath) {
                 try {
                     const response = await fetch(filePath);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return await response.json();
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
                 } catch (error) {
-                    console.error(`Error fetching data:`, error);
+                    console.error(`Error fetching data from ${filePath}:`, error);
                     return null;
                 }
             }
-            
+
+            async function fetchHtml(filePath) {
+                 try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.text();
+                } catch (error) {
+                    console.error(`Error fetching html from ${filePath}:`, error);
+                    return `<p class="text-red-400">Failed to load content.</p>`;
+                }
+            }
+
+            // --- Page Navigation & Rendering ---
             function navigate(hash) {
-                const cleanHash = hash.replace('#', '').toLowerCase();
-                if (mainMenu.classList.contains('hidden') && !cleanHash) {
+                const [page, subpage] = hash.replace('#', '').toLowerCase().split('/');
+                
+                if (mainMenu.classList.contains('hidden') && !page) {
                     showMainMenu();
                     return;
                 }
-                switch (cleanHash) {
-                    case 'install': showPage('install'); break;
-                    case 'update': showPage('update'); break;
+                switch (page) {
+                    case 'tutorials': 
+                        if (subpage) showTutorialDetailPage(subpage);
+                        else showTutorialsListPage();
+                        break;
                     case 'changelog': showChangelog(); break;
                     case 'resources': showResources(); break;
                     case 'report-issue': showReportIssuePage(); break;
                     case 'view-issues': showIssuesListPage(); break;
-                    default: 
-                        if (!mainMenu.classList.contains('hidden') && window.location.hash) {
-                           // Stay on current page if hash exists but doesn't match
-                        } else {
-                           showMainMenu();
-                        }
-                        break;
+                    default: showMainMenu(); break;
                 }
             }
 
@@ -467,43 +410,13 @@
                     setTimeout(() => pageContainer.classList.remove('slide-in-right'), animationDuration);
                 }, animationDuration);
             }
-
-            function showPage(pageKey) {
-                const pageData = pages[pageKey];
-                if (!pageData) return;
-                window.location.hash = pageKey;
-
-                transitionToPage(() => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = pageData.content;
-                    const headings = tempDiv.querySelectorAll('h2');
-                    let tocHtml = '';
-                    headings.forEach(h => {
-                        tocHtml += `<li><a href="#${h.id}" class="toc-link block py-2 px-4 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors">${h.textContent}</a></li>`;
-                    });
-
-                    pageContainer.innerHTML = `
-                        <div class="flex items-center mb-6">
-                            <button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left" class="text-gray-200"></i></button>
-                            <h1 class="text-3xl font-bold text-white">${pageData.title}</h1>
-                        </div>
-                        <div id="wiki-content" class="w-full">
-                            ${pageData.content}
-                        </div>
-                    `;
-                    tocWidget.querySelector('#toc-list').innerHTML = tocHtml;
-                    tocWidget.classList.remove('opacity-0', 'invisible');
-                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
-                    setupTocObserver();
-                    lucide.createIcons();
-                });
-            }
             
             function showMainMenu() {
-                window.location.hash = '';
+                if(window.location.hash) window.location.hash = '';
                 pageContainer.classList.add('slide-out-right');
                 tocWidget.classList.add('opacity-0', 'invisible');
                 setTimeout(() => {
+                    pageContainer.innerHTML = '';
                     pageContainer.classList.add('hidden');
                     pageContainer.classList.remove('slide-out-right');
                     mainMenu.classList.remove('hidden');
@@ -512,10 +425,105 @@
                 }, animationDuration);
             }
             
+            function createLoadingPlaceholder(count = 3) {
+                let placeholder = '<div class="space-y-6">';
+                for(let i=0; i < count; i++) {
+                    placeholder += `
+                        <div class="bg-gray-800/50 p-6 rounded-2xl border border-gray-700/50">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="skeleton-loader h-7 w-3/5"></div>
+                                <div class="skeleton-loader h-6 w-1/5"></div>
+                            </div>
+                            <div class="skeleton-loader h-4 w-full mb-2"></div>
+                            <div class="skeleton-loader h-4 w-4/5"></div>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-700/50">
+                                 <div class="skeleton-loader h-6 w-2/5"></div>
+                                 <div class="skeleton-loader h-8 w-1/4"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                return placeholder + '</div>';
+            }
+            
+            async function showTutorialsListPage() {
+                 window.location.hash = 'tutorials';
+                 transitionToPage(async () => {
+                    pageContainer.innerHTML = `
+                        <div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">教程指南</h1></div>
+                        <div id="tutorials-list-container">${createLoadingPlaceholder(2)}</div>`;
+                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
+                    
+                    const tutorialsIndex = await fetchData('./tutorials/index.json');
+                    const container = document.getElementById('tutorials-list-container');
+                    
+                    if (!tutorialsIndex || tutorialsIndex.length === 0) {
+                        container.innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><p>暂无教程。</p></div>`;
+                    } else {
+                        container.innerHTML = `<div class="space-y-4">${
+                            tutorialsIndex.map(tut => `
+                                <div role="button" tabindex="0" data-tut-id="${tut.id}" class="tutorial-list-item menu-item">
+                                    <span class="flex items-center text-lg font-medium text-white">
+                                        <i data-lucide="${tut.icon || 'book'}" class="mr-4" style="color:${tut.color || '#38bdf8'}"></i>
+                                        ${tut.title}
+                                    </span>
+                                    <i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i>
+                                </div>`).join('')
+                        }</div>`;
+                        container.querySelectorAll('.tutorial-list-item').forEach(item => {
+                            item.addEventListener('click', () => { window.location.hash = `tutorials/${item.dataset.tutId}`; });
+                        });
+                    }
+                    lucide.createIcons();
+                 });
+            }
+
+            async function showTutorialDetailPage(tutorialId) {
+                window.location.hash = `tutorials/${tutorialId}`;
+                transitionToPage(async () => {
+                    pageContainer.innerHTML = `
+                        <div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 id="tutorial-title" class="text-3xl font-bold text-white"></h1></div>
+                        <div id="wiki-content" class="w-full">${createLoadingPlaceholder(1)}</div>`;
+                     document.getElementById('btn-back').addEventListener('click', () => window.location.hash = 'tutorials');
+
+                    const tutorialData = await fetchData(`./tutorials/${tutorialId}.json`);
+                    if (!tutorialData) {
+                        document.getElementById('wiki-content').innerHTML = `<p>无法加载教程内容。</p>`;
+                        return;
+                    }
+                    
+                    document.getElementById('tutorial-title').textContent = tutorialData.title;
+                    const contentHtml = tutorialData.steps.map((step, index) => {
+                        const paragraphs = (step.paragraphs || []).map(p => `<p class="text-gray-300 mb-4">${parseContentString(p)}</p>`).join('');
+                        const listItems = (step.list || []).map(item => `<li class="flex items-start"><i data-lucide="${item.icon}" class="h-5 w-5 mr-3 mt-1 flex-shrink-0" style="color: ${item.color || '#38bdf8'}"></i><span>${parseContentString(item.text)}</span></li>`).join('');
+                        const notice = step.notice ? `<div class="bg-yellow-900/50 border-l-4 border-yellow-400 p-4 my-4 rounded-r-2xl flex items-start"><i data-lucide="alert-triangle" class="w-5 h-5 mr-3 text-yellow-400 flex-shrink-0 mt-1"></i><span>${parseContentString(step.notice.text)}</span></div>` : '';
+
+                        return `
+                        <div class="bg-gray-900/50 border border-gray-700 rounded-2xl p-6">
+                            ${step.image ? `<img src="./tutorials/${step.image}" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="${step.title}" >` : ''}
+                            <div class="flex items-center mb-4">
+                                <div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">${index + 1}</div>
+                                <h2 id="${step.id}" class="text-2xl font-bold text-white">${step.title}</h2>
+                            </div>
+                            ${paragraphs}
+                            ${listItems ? `<ul class="space-y-3 mt-4">${listItems}</ul>` : ''}
+                            ${notice}
+                        </div>`;
+                    }).join('<div class="my-8"></div>');
+
+                    document.getElementById('wiki-content').innerHTML = `<div class="space-y-8">${contentHtml}</div>`;
+                    
+                    const tocHtml = tutorialData.steps.map(step => `<li><a href="#${step.id}" class="toc-link block py-2 px-4 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors">${step.title}</a></li>`).join('');
+                    tocWidget.querySelector('#toc-list').innerHTML = tocHtml;
+                    tocWidget.classList.remove('opacity-0', 'invisible');
+                    setupTocObserver();
+                    lucide.createIcons();
+                });
+            }
+            
             function parseContentString(text, isGithubMarkdown = false) {
                  let processedText = text || '';
                  
-                 // Basic formatting
                  processedText = processedText
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
@@ -525,9 +533,8 @@
                     });
 
                 if (isGithubMarkdown) {
-                    // More complex GitHub-flavored markdown
                     processedText = processedText
-                        .replace(/(\r\n|\n\r|\r|\n)/g, '\n') // Normalize line endings
+                        .replace(/(\r\n|\n\r|\r|\n)/g, '\n') 
                         .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">$1</a>')
                         .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
                         .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-4 mb-2">$1</h2>')
@@ -576,10 +583,13 @@
             function showChangelog() {
                 window.location.hash = 'changelog';
                 transitionToPage(async () => {
-                    const logDataArray = await fetchData(logFile);
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">更新日志</h1></div>${createLoadingPlaceholder()}`;
+                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
+                    
+                    const logDataArray = await fetchData('./logs/logs.json');
                     let logsHtml;
                     if (!logDataArray || logDataArray.length === 0) {
-                        logsHtml = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-2xl border border-gray-700 text-center"><i data-lucide="archive-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">暂无更新日志</h3><p class="mt-1 text-sm text-gray-400">所有内容都是最新的！</p></div>`;
+                        logsHtml = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><i data-lucide="archive-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg text-white">暂无更新日志</h3></div>`;
                     } else {
                         const sortedLogEntries = [...logDataArray].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
                         logsHtml = sortedLogEntries.map(entry => {
@@ -596,8 +606,7 @@
                             </div>`;
                         }).join('<div class="my-6"></div>');
                     }
-                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">更新日志</h1></div><div class="space-y-6">${logsHtml}</div>`;
-                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
+                    pageContainer.querySelector('div:last-child').innerHTML = `<div class="space-y-6">${logsHtml}</div>`;
                     tocWidget.classList.add('opacity-0', 'invisible');
                     lucide.createIcons();
                 });
@@ -606,10 +615,13 @@
             function showResources() {
                 window.location.hash = 'resources';
                  transitionToPage(async () => {
-                    const resourceDataArray = await fetchData(resourceFile);
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">资源获取</h1></div>${createLoadingPlaceholder()}`;
+                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
+
+                    const resourceDataArray = await fetchData('./resources/resources.json');
                     let resourcesHtml;
                     if (!resourceDataArray || resourceDataArray.length === 0) {
-                        resourcesHtml = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-2xl border border-gray-700 text-center"><i data-lucide="package-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">暂无资源</h3><p class="mt-1 text-sm text-gray-400">资源正在准备中，请稍后查看。</p></div>`;
+                        resourcesHtml = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><i data-lucide="package-x" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">暂无资源</h3></div>`;
                     } else {
                          resourcesHtml = resourceDataArray.map(entry => `
                             <div class="bg-gray-800/80 backdrop-blur-md p-6 rounded-2xl border border-gray-700">
@@ -618,8 +630,7 @@
                                 ${renderButtons(entry.buttons)}
                             </div>`).join('<div class="my-6"></div>');
                     }
-                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">资源获取</h1></div><div class="space-y-6">${resourcesHtml}</div>`;
-                    document.getElementById('btn-back').addEventListener('click', showMainMenu);
+                    pageContainer.querySelector('div:last-child').innerHTML = `<div class="space-y-6">${resourcesHtml}</div>`;
                     tocWidget.classList.add('opacity-0', 'invisible');
                     lucide.createIcons();
                 });
@@ -638,7 +649,7 @@
                                 <div class="flex flex-col sm:flex-row items-center gap-6">
                                     <div id="qq-avatar-placeholder" class="flex-shrink-0 w-24 h-24 rounded-full bg-gray-700 border-4 border-gray-600 flex items-center justify-center">
                                         <i data-lucide="image-off" class="w-10 h-10 text-gray-500"></i>
-                                        <img id="qq-avatar" alt="QQ Avatar" class="w-full h-full rounded-full hidden">
+                                        <img id="qq-avatar" alt="QQ Avatar" class="w-full h-full rounded-full hidden" onerror="this.classList.add('hidden'); this.previousElementSibling.classList.remove('hidden');">
                                     </div>
                                     <div class="w-full space-y-6">
                                         <div class="input-group-wrapper">
@@ -885,11 +896,7 @@
             async function showIssuesListPage() {
                 window.location.hash = 'view-issues';
                 transitionToPage(() => {
-                    pageContainer.innerHTML = `
-                        <div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">现有问题列表</h1></div>
-                        <div id="issues-list-container" class="space-y-4">
-                            <div class="text-center p-8"><div class="spinner mx-auto" style="width: 2rem; height: 2rem;"></div><p class="mt-4 text-gray-400">正在从 GitHub 加载问题...</p></div>
-                        </div>`;
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">现有问题列表</h1></div>${createLoadingPlaceholder()}`;
                      document.getElementById('btn-back').addEventListener('click', showMainMenu);
                      tocWidget.classList.add('opacity-0', 'invisible');
                      loadGithubIssues();
@@ -897,16 +904,16 @@
             }
 
             async function loadGithubIssues() {
-                const container = document.getElementById('issues-list-container');
+                const container = pageContainer.querySelector('div:last-child');
                 try {
                     const response = await fetch(`https://api.github.com/repos/${githubRepo}/issues`);
                     if (!response.ok) throw new Error(`GitHub API error: ${response.statusText}`);
                     
                     const issues = await response.json();
                     if (issues.length === 0) {
-                        container.innerHTML = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-2xl border border-gray-700 text-center"><i data-lucide="shield-check" class="mx-auto h-12 w-12 text-green-500"></i><h3 class="mt-4 text-lg font-medium text-white">太棒了！</h3><p class="mt-1 text-sm text-gray-400">当前没有任何待解决的问题。</p></div>`;
+                        container.innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><i data-lucide="shield-check" class="mx-auto h-12 w-12 text-green-500"></i><h3 class="mt-4 text-lg font-medium text-white">太棒了！</h3><p class="mt-1 text-sm text-gray-400">当前没有任何待解决的问题。</p></div>`;
                     } else {
-                        container.innerHTML = issues.map(issue => {
+                        container.innerHTML = `<div class="space-y-4">${issues.map(issue => {
                             const date = new Date(issue.created_at).toLocaleDateString('zh-CN');
                             const stateClass = issue.state === 'open' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400';
                             const stateText = issue.state === 'open' ? '未解决' : '已解决';
@@ -934,11 +941,11 @@
                                     </a>
                                 </div>
                             </div>`;
-                        }).join('');
+                        }).join('')}</div>`;
                     }
                 } catch (error) {
                     console.error("加载 GitHub Issues 失败:", error);
-                    container.innerHTML = `<div class="bg-gray-800/80 backdrop-blur-md p-8 rounded-2xl border border-gray-700 text-center"><i data-lucide="wifi-off" class="mx-auto h-12 w-12 text-yellow-500"></i><h3 class="mt-4 text-lg font-medium text-white">加载失败</h3><p class="mt-1 text-sm text-gray-400">无法连接到 GitHub。可能是网络问题或 API 速率限制。请稍后再试。</p></div>`;
+                    container.innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><i data-lucide="wifi-off" class="mx-auto h-12 w-12 text-yellow-500"></i><h3 class="mt-4 text-lg font-medium text-white">加载失败</h3><p class="mt-1 text-sm text-gray-400">无法连接到 GitHub。请稍后再试。</p></div>`;
                 } finally {
                     lucide.createIcons();
                 }
@@ -973,12 +980,6 @@
                         document.querySelector(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 });
-            }
-
-            const prefaceModal = document.getElementById('preface-modal');
-            const faqModal = document.getElementById('faq-modal');
-            function toggleSimpleModal(modal, show) {
-                modal.classList.toggle('modal-hidden', !show);
             }
 
             const imageViewer = {
@@ -1040,7 +1041,7 @@
                 container: document.getElementById('gallery-carousel'),
                 slides: [], currentIndex: 0, timer: null,
                 async init() {
-                    const data = await fetchData(galleryFile);
+                    const data = await fetchData('./gallery/gallery.json');
                     if (!data || !data.length) { this.container.classList.add('hidden'); return; }
                     this.slides = data;
                     this.container.innerHTML = `
@@ -1053,7 +1054,6 @@
                         <button id="carousel-next" class="absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70 transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
                         <div id="carousel-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2"></div>`;
                     
-                    // Re-select elements after innerHTML rewrite
                     this.inner = this.container.querySelector('#carousel-inner');
                     this.titleEl = this.container.querySelector('#carousel-title');
                     this.descriptionEl = this.container.querySelector('#carousel-description');
@@ -1088,61 +1088,89 @@
                 startAutoplay() { clearInterval(this.timer); this.timer = setInterval(() => this.changeSlide(1), 5000); }
             };
             
-            // Initial Setup
-            imageViewer.init();
-            galleryCarousel.init();
-
-            document.getElementById('btn-preface').addEventListener('click', () => toggleSimpleModal(prefaceModal, true));
-            document.getElementById('btn-faq').addEventListener('click', () => toggleSimpleModal(faqModal, true));
-            document.querySelectorAll('.modal-bg, .btn-close-modal').forEach(el => el.addEventListener('click', (e) => toggleSimpleModal(e.target.closest('.modal'), false)));
-
-            pageContainer.addEventListener('click', (e) => {
-                const targetImage = e.target.closest('.enlargeable-image');
-                if (targetImage) imageViewer.open(targetImage.src, pageContainer);
-            });
-
-            document.getElementById('btn-install').addEventListener('click', () => { window.location.hash = 'install'; });
-            document.getElementById('btn-update').addEventListener('click', () => { window.location.hash = 'update'; });
-            document.getElementById('btn-changelog').addEventListener('click', () => { window.location.hash = 'changelog'; });
-            document.getElementById('btn-resources').addEventListener('click', () => { window.location.hash = 'resources'; });
-            document.getElementById('btn-report-issue').addEventListener('click', () => { window.location.hash = 'report-issue'; });
-            document.getElementById('btn-view-issues').addEventListener('click', () => { window.location.hash = 'view-issues'; });
-            
-            window.addEventListener('hashchange', () => navigate(window.location.hash));
-            navigate(window.location.hash);
-            lucide.createIcons();
-
-            const canvas = document.getElementById('bg-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height, particles;
-            function setup() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-                particles = [];
-                const particleCount = 20;
-                for (let i = 0; i < particleCount; i++) {
-                    particles.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
-                        radius: Math.random() * 100 + 50,
-                        color: `rgba(${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 100) + 50}, ${Math.floor(Math.random() * 155) + 100}, ${Math.random() * 0.3 + 0.1})`
-                    });
-                }
+            function handleKeyboardNavigation(e) {
+                 if (e.key === 'Enter' && document.activeElement && document.activeElement.matches('[role="button"]')) {
+                     document.activeElement.click();
+                 }
+                 if (e.key === 'Escape') {
+                     const openModal = document.querySelector('.modal:not(.modal-hidden)');
+                     if(openModal) toggleSimpleModal(openModal, false);
+                 }
             }
-            function draw() {
-                if (!ctx) return;
-                ctx.clearRect(0, 0, width, height);
-                particles.forEach(p => {
-                    p.x += p.vx; p.y += p.vy;
-                    if (p.x < -p.radius || p.x > width + p.radius) p.vx *= -1;
-                    if (p.y < -p.radius || p.y > height + p.radius) p.vy *= -1;
-                    ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
+
+            // --- Initial Setup & Event Listeners ---
+            function init() {
+                imageViewer.init();
+                galleryCarousel.init();
+
+                document.getElementById('btn-faq').addEventListener('click', () => toggleSimpleModal(document.getElementById('faq-modal'), true));
+                document.querySelectorAll('.modal-bg, .btn-close-modal').forEach(el => el.addEventListener('click', (e) => toggleSimpleModal(e.target.closest('.modal'), false)));
+
+                pageContainer.addEventListener('click', (e) => {
+                    const targetImage = e.target.closest('.enlargeable-image');
+                    if (targetImage) imageViewer.open(targetImage.src, pageContainer);
                 });
-                requestAnimationFrame(draw);
+
+                document.getElementById('btn-tutorials').addEventListener('click', () => { window.location.hash = 'tutorials'; });
+                document.getElementById('btn-changelog').addEventListener('click', () => { window.location.hash = 'changelog'; });
+                document.getElementById('btn-resources').addEventListener('click', () => { window.location.hash = 'resources'; });
+                document.getElementById('btn-report-issue').addEventListener('click', () => { window.location.hash = 'report-issue'; });
+                document.getElementById('btn-view-issues').addEventListener('click', () => { window.location.hash = 'view-issues'; });
+                
+                window.addEventListener('hashchange', () => navigate(window.location.hash));
+                document.addEventListener('keydown', handleKeyboardNavigation);
+                
+                navigate(window.location.hash);
+                lucide.createIcons();
+
+                const canvas = document.getElementById('bg-canvas');
+                const ctx = canvas.getContext('2d');
+                let width, height, particles;
+                
+                function setupCanvas() {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                    particles = [];
+                    const particleCount = 20;
+                    for (let i = 0; i < particleCount; i++) {
+                        particles.push({
+                            x: Math.random() * width, y: Math.random() * height,
+                            vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
+                            radius: Math.random() * 100 + 50,
+                            color: `rgba(${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 100) + 50}, ${Math.floor(Math.random() * 155) + 100}, ${Math.random() * 0.3 + 0.1})`
+                        });
+                    }
+                }
+
+                function drawCanvas() {
+                    if (!ctx) return;
+                    ctx.clearRect(0, 0, width, height);
+                    particles.forEach(p => {
+                        p.x += p.vx; p.y += p.vy;
+                        if (p.x < -p.radius) p.x = width + p.radius;
+                        if (p.x > width + p.radius) p.x = -p.radius;
+                        if (p.y < -p.radius) p.y = height + p.radius;
+                        if (p.y > height + p.radius) p.y = -p.radius;
+                        ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
+                    });
+                    animationFrameId = requestAnimationFrame(drawCanvas);
+                }
+                
+                function handleVisibilityChange() {
+                    if (document.hidden) {
+                        cancelAnimationFrame(animationFrameId);
+                    } else {
+                        drawCanvas();
+                    }
+                }
+                
+                window.addEventListener('resize', setupCanvas);
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+                setupCanvas();
+                drawCanvas();
             }
-            window.addEventListener('resize', setup);
-            setup();
-            draw();
+            
+            init();
         });
     </script>
 </body>
