@@ -1,0 +1,12 @@
+{
+  "servers": [
+    {
+      "name": "主游戏服务器",
+      "ip": "frp-leg.com:41711",
+      "icon": "router",
+      "show_ping": true,
+      "ping_interval": 30,
+      "show_address": true
+    }
+  ]
+}
