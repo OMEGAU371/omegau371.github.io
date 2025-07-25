@@ -118,7 +118,7 @@
         
         #gallery-carousel { aspect-ratio: 16 / 9; transition: opacity 0.5s ease; border: 1px solid var(--border-color); }
         .carousel-slide { transition: opacity 0.6s ease-in-out; background-size: cover; background-position: center; }
-        .carousel-dot.active { background-color: var(--accent-color-end); }
+        .carousel-dot { background-color: var(--accent-color-end); } /* Active state is handled separately */
         
         #image-viewer-modal .modal-box { transform: scale(1); background: transparent; }
         .image-viewer-img { position: absolute; max-width: 95%; max-height: 95%; cursor: grab; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-in-out; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; }
@@ -158,15 +158,15 @@
         .in-field-error-display .feedback-icon { width: 16px; height: 16px; margin-right: 8px; }
         .input-field.text-temporarily-hidden { color: transparent !important; }
         
-        /* 波纹点击效果 */
-        .ripple-effect {
+        /* 波纹点击效果 (已移除，故此CSS不再生效) */
+        /* .ripple-effect {
             position: absolute;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.6);
             transform: scale(0);
             animation: ripple 0.6s linear;
         }
-        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } } */
 
         button#btn-submit-issue { position: relative; overflow: hidden; border-radius: 12px; border: none; font-weight: 600; width: 100%; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; cursor: pointer; background: linear-gradient(120deg, #f97316, #ea580c); color: white; font-size: 1rem; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.25); margin-top: 1rem; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         button#btn-submit-issue:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(249, 115, 22, 0.35); }
@@ -225,6 +225,37 @@
             transition: color 0.5s ease, background-color 0.5s ease;
         }
 
+        /* Carousel and Image Viewer Dots Optimization */
+        .carousel-dot {
+            width: 8px; /* Default size */
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.4); /* Inactive dot color */
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent; /* Subtle border for inactive */
+        }
+        .carousel-dot:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+        .carousel-dot.active {
+            background-color: var(--accent-color-end); /* Active color */
+            transform: scale(1.5); /* Larger for active state */
+            border-color: var(--accent-color-end);
+            box-shadow: 0 0 5px var(--accent-color-end); /* Subtle glow for active */
+        }
+
+        /* Image Viewer Specific Dots */
+        #image-viewer-dots .carousel-dot {
+            background-color: rgba(255, 255, 255, 0.6); /* Slightly brighter for viewer */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #image-viewer-dots .carousel-dot.active-viewer-dot {
+            background-color: var(--accent-color-end);
+            transform: scale(1.2); /* Slightly larger in viewer */
+            box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.5); /* Subtle glow */
+        }
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -255,7 +286,6 @@
                 </div>
                 <div id="btn-report-issue" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="flame" class="mr-4 text-orange-400"></i>报告新问题</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
                 
-                <!-- 修改：服务器地址按钮，样式统一 -->
                 <div id="btn-server-status" role="button" tabindex="0" class="menu-item"><span class="flex items-center text-lg font-medium text-white"><i data-lucide="server" class="mr-4 text-yellow-300"></i>服务器地址</span><i data-lucide="arrow-right" class="menu-item-arrow text-gray-400"></i></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -267,7 +297,6 @@
         <div id="page-container" class="hidden max-w-5xl mx-auto"></div>
     </div>
 
-    <!-- Modals (no change) -->
     <div id="faq-modal" class="modal fixed inset-0 flex items-center justify-center p-4 z-50 modal-hidden">
         <div class="modal-bg fixed inset-0 bg-black/50 backdrop-blur-lg"></div>
         <div class="modal-box rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
@@ -765,7 +794,7 @@
                         userInfoHtml += `<p class="flex items-center gap-2 text-yellow-400"><i data-lucide="alert-triangle"></i>未能获取运营商信息。</p>`;
                     }
 
-                    mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&amp;output=embed`;
+                    mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&output=embed`;
 
                 } catch (geoError) {
                     // Step 2: Fallback to IP-based geolocation if browser geolocation fails or is denied
@@ -786,7 +815,7 @@
                             userInfoHtml += `<p class="flex items-center gap-2 text-gray-300"><i data-lucide="building" class="w-4 h-4 text-gray-400"></i>运营商: <strong class="text-white">${geoData.isp}</strong></p>`;
                             userInfoHtml += `<p class="flex items-center gap-2 text-yellow-400"><i data-lucide="info" class="w-4 h-4 mr-1"></i>位置信息通过 IP 地址近似获取。</p>`;
 
-                            mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&amp;output=embed`;
+                            mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&output=embed`;
                         } else {
                             // Both geolocation and IP-API failed
                             userInfoHtml = `<p class="flex items-center gap-2 text-red-400"><i data-lucide="x-circle"></i>无法获取您的连接信息。</p>`;
@@ -976,78 +1005,236 @@
 
             const imageViewer = {
                 modal: document.getElementById('image-viewer-modal'),
-                imageElements: document.querySelectorAll('.image-viewer-img'),
+                imageElements: document.querySelectorAll('.image-viewer-img'), // Assumes 2 img elements exist
                 btnPrev: document.getElementById('btn-prev-image'),
                 btnNext: document.getElementById('btn-next-image'),
                 btnClose: document.getElementById('btn-close-viewer'),
-                imageList: [], currentIndex: 0, activeImageIndex: 0,
+                toolbar: null, // Will be set in init
+                dotsContainer: null, // Will be created in init
+                imageList: [], 
+                currentIndex: 0, 
+                activeImageIndex: 0, // 0 or 1, corresponds to which imageElement is active
+
+                // Helper to load image and ensure onload fires consistently
+                loadImagePromise: (imgElement, src) => {
+                    return new Promise((resolve, reject) => {
+                        imgElement.onload = () => resolve(imgElement);
+                        imgElement.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+                        imgElement.src = src;
+                        // Handle cached images: if already loaded, resolve immediately
+                        if (imgElement.complete && imgElement.naturalHeight !== 0) {
+                            resolve(imgElement);
+                        }
+                    });
+                },
                 
                 open(clickedImageSrc, contextElement) {
-                    this.imageList = Array.from(contextElement.querySelectorAll('.enlargeable-image')).map(img => img.dataset.src || img.src);
+                    this.imageList = Array.from(contextElement.querySelectorAll('.enlargeable-image')).map(el => el.dataset.src || el.src);
                     this.currentIndex = this.imageList.findIndex(src => src === clickedImageSrc);
                     if (this.currentIndex === -1) return;
+
                     this.modal.classList.remove('modal-hidden');
                     document.body.style.overflow = 'hidden';
-                    this.activeImageIndex = 0;
-                    this.loadCurrentImage(true);
+
+                    // Initialize the two image elements for cross-fading
+                    this.activeImageIndex = 0; // Start with the first img element as the active one
+                    this.imageElements[0].classList.add('active');
+                    this.imageElements[1].classList.remove('active');
+
+                    this.loadCurrentImage(true); // Load the first image (isFirstLoad = true)
+                    this.updateDots(); // Initial dots update
                 },
-                close() { this.modal.classList.add('modal-hidden'); document.body.style.overflow = ''; this.imageElements.forEach(img => img.classList.remove('active')); },
+
+                close() { 
+                    this.modal.classList.add('modal-hidden'); 
+                    document.body.style.overflow = ''; 
+                    // Reset active classes and image sources
+                    this.imageElements.forEach(img => {
+                        img.classList.remove('active');
+                        img.src = ''; // Clear image src
+                        this.resetImageTransform(img);
+                    });
+                    this.dotsContainer.innerHTML = ''; // Clear dots
+                },
+
                 loadCurrentImage(isFirstLoad = false) {
-                    const currentImg = this.imageElements[this.activeImageIndex];
-                    const nextImg = this.imageElements[1 - this.activeImageIndex];
+                    const currentActiveImg = this.imageElements[this.activeImageIndex];
+                    const targetImg = this.imageElements[1 - this.activeImageIndex]; // The one to load the new image into
                     const newSrc = this.imageList[this.currentIndex];
-                    if (isFirstLoad) { this.resetImageTransform(currentImg); currentImg.src = newSrc; currentImg.classList.add('active'); } 
-                    else {
-                        nextImg.src = newSrc;
-                        nextImg.onload = () => { this.resetImageTransform(nextImg); currentImg.classList.remove('active'); nextImg.classList.add('active'); this.activeImageIndex = 1 - this.activeImageIndex; };
-                    }
-                    this.updateNavButtons();
+
+                    this.resetImageTransform(targetImg); // Reset transform before loading new image
+
+                    this.loadImagePromise(targetImg, newSrc)
+                        .then(() => {
+                            // Image successfully loaded into targetImg
+                            currentActiveImg.classList.remove('active'); // Hide old active image
+                            targetImg.classList.add('active'); // Show new image
+                            this.activeImageIndex = 1 - this.activeImageIndex; // Flip active index
+                            this.updateNavButtons();
+                            this.updateDots(); // Update dots after successful load and switch
+                        })
+                        .catch(error => {
+                            console.error("Image loading error:", error);
+                            // Fallback to error image
+                            targetImg.src = 'https://placehold.co/1200x800/1f2937/9ca3af?text=Image+Load+Error';
+                            currentActiveImg.classList.remove('active');
+                            targetImg.classList.add('active');
+                            this.activeImageIndex = 1 - this.activeImageIndex;
+                            this.updateNavButtons();
+                            this.updateDots();
+                        });
                 },
-                navigate(direction) { const newIndex = this.currentIndex + direction; if (newIndex >= 0 && newIndex < this.imageList.length) { this.currentIndex = newIndex; this.loadCurrentImage(); } },
-                updateNavButtons() { this.btnPrev.disabled = this.currentIndex === 0; this.btnNext.disabled = this.currentIndex === this.imageList.length - 1; },
+
+                navigate(direction) { 
+                    const newIndex = this.currentIndex + direction; 
+                    if (newIndex >= 0 && newIndex < this.imageList.length) { 
+                        this.currentIndex = newIndex; 
+                        this.loadCurrentImage(); // Load the new image
+                    } 
+                },
+
+                updateNavButtons() { 
+                    this.btnPrev.disabled = this.currentIndex === 0; 
+                    this.btnNext.disabled = this.currentIndex === this.imageList.length - 1; 
+                },
+
                 getCurrentImage() { return this.modal.querySelector('.image-viewer-img.active'); },
                 zoom(amount) { const img = this.getCurrentImage(); if (!img) return; let z = parseFloat(img.dataset.zoom || 1); img.dataset.zoom = Math.max(1, z + amount); if (img.dataset.zoom == 1) { img.dataset.translateX = 0; img.dataset.translateY = 0; } this.applyImageTransform(img); },
                 rotate(degrees) { const img = this.getCurrentImage(); if (!img) return; img.dataset.rotation = (parseInt(img.dataset.rotation || 0) + degrees); this.applyImageTransform(img); },
                 applyImageTransform(img) { if (img) img.style.transform = `translate(${img.dataset.translateX || 0}px, ${img.dataset.translateY || 0}px) scale(${img.dataset.zoom || 1}) rotate(${img.dataset.rotation || 0}deg)`; },
                 resetImageTransform(img) { if (img) { Object.assign(img.dataset, { zoom: 1, rotation: 0, translateX: 0, translateY: 0 }); this.applyImageTransform(img); } },
+
+                updateDots() {
+                    if (!this.dotsContainer) return;
+                    this.dotsContainer.innerHTML = ''; // Clear existing dots
+                    this.imageList.forEach((_, i) => {
+                        const dot = document.createElement('button');
+                        dot.className = `carousel-dot w-3 h-3 rounded-full transition-all duration-300 ${i === this.currentIndex ? 'active-viewer-dot' : ''}`;
+                        dot.dataset.index = i;
+                        dot.addEventListener('click', () => this.navigate(i - this.currentIndex)); // Navigate by difference
+                        this.dotsContainer.appendChild(dot);
+                    });
+                },
+
                 init() {
                     this.btnClose.addEventListener('click', () => this.close());
                     this.modal.addEventListener('click', (e) => { if (e.target.classList.contains('modal-box') || e.target.id === 'image-viewer-modal') this.close(); });
-                    this.btnPrev.addEventListener('click', () => this.navigate(-1)); this.btnNext.addEventListener('click', () => this.navigate(1));
+                    this.btnPrev.addEventListener('click', () => this.navigate(-1)); 
+                    this.btnNext.addEventListener('click', () => this.navigate(1));
                     document.getElementById('btn-zoom-in').addEventListener('click', () => this.zoom(0.25));
                     document.getElementById('btn-zoom-out').addEventListener('click', () => this.zoom(-0.25));
                     document.getElementById('btn-rotate-left').addEventListener('click', () => this.rotate(-90));
                     document.getElementById('btn-rotate-right').addEventListener('click', () => this.rotate(90));
+                    
+                    // Add dots container to toolbar
+                    this.toolbar = document.getElementById('image-viewer-toolbar');
+                    if (this.toolbar) {
+                        this.dotsContainer = document.createElement('div');
+                        this.dotsContainer.id = 'image-viewer-dots';
+                        this.dotsContainer.className = 'flex space-x-2 absolute left-1/2 bottom-2 transform -translate-x-1/2';
+                        this.toolbar.parentNode.insertBefore(this.dotsContainer, this.toolbar.nextSibling); // Insert after toolbar
+                    }
+
+                    // Drag functionality
                     let isDragging = false, startPos = { x: 0, y: 0 };
-                    this.modal.addEventListener('mousedown', (e) => { const img = this.getCurrentImage(); if (img && e.target === img && parseFloat(img.dataset.zoom || 1) > 1) { e.preventDefault(); isDragging = true; startPos = { x: e.clientX - (parseFloat(img.dataset.translateX) || 0), y: e.clientY - (parseFloat(img.dataset.translateY) || 0) }; img.classList.add('is-dragging'); } });
-                    window.addEventListener('mousemove', (e) => { if (isDragging) { const img = this.getCurrentImage(); if (img) { img.dataset.translateX = e.clientX - startPos.x; img.dataset.translateY = e.clientY - startPos.y; this.applyImageTransform(img); } } });
-                    window.addEventListener('mouseup', () => { if (isDragging) { this.getCurrentImage()?.classList.remove('is-dragging'); isDragging = false; } });
+                    this.modal.addEventListener('mousedown', (e) => { 
+                        const img = this.getCurrentImage(); 
+                        if (img && e.target === img && parseFloat(img.dataset.zoom || 1) > 1) { 
+                            e.preventDefault(); 
+                            isDragging = true; 
+                            startPos = { x: e.clientX - (parseFloat(img.dataset.translateX) || 0), y: e.clientY - (parseFloat(img.dataset.translateY) || 0) }; 
+                            img.classList.add('is-dragging'); 
+                        } 
+                    });
+                    window.addEventListener('mousemove', (e) => { 
+                        if (isDragging) { 
+                            const img = this.getCurrentImage(); 
+                            if (img) { 
+                                img.dataset.translateX = e.clientX - startPos.x; 
+                                img.dataset.translateY = e.clientY - startPos.y; 
+                                this.applyImageTransform(img); 
+                            } 
+                        } 
+                    });
+                    window.addEventListener('mouseup', () => { 
+                        if (isDragging) { 
+                            this.getCurrentImage()?.classList.remove('is-dragging'); 
+                            isDragging = false; 
+                        } 
+                    });
                 }
             };
 
             const galleryCarousel = {
                 container: document.getElementById('gallery-carousel'),
+                slides: [], // Will store slide data
+                currentIndex: 0, // Current active slide index
+                timer: null, // Autoplay timer
+
                 async init() {
                     const data = await fetchData('./gallery/gallery.json');
                     if (!data || !data.length) return this.container.classList.add('hidden');
                     this.slides = data;
-                    this.container.innerHTML = `<div id="carousel-inner" class="w-full h-full"></div><div id="carousel-info" class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/70 to-transparent"><h3 id="carousel-title" class="text-2xl font-bold text-white"></h3><p id="carousel-description" class="text-gray-300 mt-1"></p></div><button id="carousel-prev" class="absolute top-1/2 left-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i></button><button id="carousel-next" class="absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70 transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button><div id="carousel-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2"></div>`;
-                    Object.assign(this, { inner: this.container.querySelector('#carousel-inner'), titleEl: this.container.querySelector('#carousel-title'), descriptionEl: this.container.querySelector('#carousel-description'), dotsContainer: this.container.querySelector('#carousel-dots'), btnPrev: this.container.querySelector('#carousel-prev'), btnNext: this.container.querySelector('#carousel-next') });
-                    this.render(); this.container.classList.remove('hidden'); this.bindEvents(); this.showSlide(0); this.startAutoplay(); lucide.createIcons();
+                    this.container.innerHTML = `
+                        <div id="carousel-inner" class="w-full h-full"></div>
+                        <div id="carousel-info" class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/70 to-transparent">
+                            <h3 id="carousel-title" class="text-2xl font-bold text-white"></h3>
+                            <p id="carousel-description" class="text-gray-300 mt-1"></p>
+                        </div>
+                        <button id="carousel-prev" class="absolute top-1/2 left-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70 transition-colors"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                        <button id="carousel-next" class="absolute top-1/2 right-4 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full hover:bg-black/70 transition-colors"><i data-lucide="arrow-right" class="w-6 h-6"></i></button>
+                        <div id="carousel-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2"></div>
+                    `;
+                    Object.assign(this, { 
+                        inner: this.container.querySelector('#carousel-inner'), 
+                        titleEl: this.container.querySelector('#carousel-title'), 
+                        descriptionEl: this.container.querySelector('#carousel-description'), 
+                        dotsContainer: this.container.querySelector('#carousel-dots'), 
+                        btnPrev: this.container.querySelector('#carousel-prev'), 
+                        btnNext: this.container.querySelector('#carousel-next') 
+                    });
+                    this.render(); 
+                    this.container.classList.remove('hidden'); 
+                    this.bindEvents(); 
+                    this.showSlide(0); 
+                    this.startAutoplay(); 
+                    lucide.createIcons();
                 },
+
                 render() {
-                    this.inner.innerHTML = this.slides.map(slide => `<div class="carousel-slide absolute w-full h-full opacity-0 cursor-pointer enlargeable-image" style="background-image: url(./gallery/${slide.image})" data-src="./gallery/${slide.image}"></div>`).join('');
-                    this.dotsContainer.innerHTML = this.slides.map((_, i) => `<button class="carousel-dot w-3 h-3 bg-white/40 rounded-full transition-colors" data-index="${i}"></button>`).join('');
+                    this.inner.innerHTML = this.slides.map(slide => 
+                        `<div class="carousel-slide absolute w-full h-full opacity-0 cursor-pointer enlargeable-image" 
+                                style="background-image: url(./gallery/${slide.image})" 
+                                data-src="./gallery/${slide.image}"></div>`
+                    ).join('');
+                    this.dotsContainer.innerHTML = this.slides.map((_, i) => 
+                        `<button class="carousel-dot w-3 h-3 bg-white/40 rounded-full transition-all duration-300" data-index="${i}"></button>`
+                    ).join('');
                 },
+
                 bindEvents() {
                     this.btnPrev.addEventListener('click', () => this.changeSlide(-1));
                     this.btnNext.addEventListener('click', () => this.changeSlide(1));
-                    this.dotsContainer.addEventListener('click', (e) => { if (e.target.matches('.carousel-dot')) this.changeSlide(null, parseInt(e.target.dataset.index)); });
-                    this.inner.addEventListener('click', (e) => { if (e.target.matches('.enlargeable-image')) imageViewer.open(e.target.dataset.src, this.inner); });
+                    this.dotsContainer.addEventListener('click', (e) => { 
+                        if (e.target.matches('.carousel-dot')) {
+                            this.changeSlide(null, parseInt(e.target.dataset.index)); 
+                        }
+                    });
+                    this.inner.addEventListener('click', (e) => { 
+                        const targetImage = e.target.closest('.enlargeable-image'); // Ensure it's the slide itself
+                        if (targetImage) {
+                            // Pass the data-src to imageViewer
+                            imageViewer.open(targetImage.dataset.src, this.inner); 
+                        }
+                    });
                     this.container.addEventListener('mouseenter', () => clearInterval(this.timer));
                     this.container.addEventListener('mouseleave', () => this.startAutoplay());
                 },
-                changeSlide(direction, index = null) { this.showSlide(index !== null ? index : (this.currentIndex + direction + this.slides.length) % this.slides.length); },
+
+                changeSlide(direction, index = null) { 
+                    this.showSlide(index !== null ? index : (this.currentIndex + direction + this.slides.length) % this.slides.length); 
+                },
+
                 showSlide(index) {
                     this.currentIndex = index;
                     this.inner.querySelectorAll('.carousel-slide').forEach((el, i) => el.style.opacity = i === index ? '1' : '0');
@@ -1055,7 +1242,11 @@
                     this.titleEl.textContent = this.slides[index].title;
                     this.descriptionEl.textContent = this.slides[index].description;
                 },
-                startAutoplay() { clearInterval(this.timer); this.timer = setInterval(() => this.changeSlide(1), 5000); }
+
+                startAutoplay() { 
+                    clearInterval(this.timer); 
+                    this.timer = setInterval(() => this.changeSlide(1), 5000); 
+                }
             };
 
             const setupAdvancedForm = () => { 
@@ -1249,7 +1440,7 @@
                         container.innerHTML = `<div class="p-8 rounded-2xl text-center content-card skeleton-loader" style="background-color: var(--skeleton-bg); border: 1px solid var(--border-color);"><i data-lucide="shield-check" class="mx-auto h-12 w-12 text-green-500"></i><h3 class="mt-4 text-lg font-medium text-white">太棒了！</h3><p class="mt-1 text-sm text-gray-400">当前没有任何待解决的问题。</p></div>`;
                     } else {
                         container.innerHTML = `<div class="space-y-4">${issues.map((issue, index) => {
-                            const date = new Date(issue.created_at).toLocaleDateString('zh-CN');
+                            const date = new Date(issue.created_at).toLocaleDateDateString('zh-CN');
                             const stateClass = issue.state === 'open' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400';
                             const stateText = issue.state === 'open' ? '未解决' : '已解决';
                             return `
@@ -1287,6 +1478,8 @@
                 document.getElementById('btn-faq').addEventListener('click', () => toggleSimpleModal(document.getElementById('faq-modal'), true));
                 document.querySelectorAll('.modal-bg, .btn-close-modal').forEach(el => el.addEventListener('click', (e) => toggleSimpleModal(e.target.closest('.modal'), false)));
                 
+                // 移除了波纹点击效果的事件监听器
+                /*
                 document.body.addEventListener('click', e => {
                     const button = e.target.closest('button, .menu-item');
                     if (button && !button.classList.contains('ip-copy-btn')) {
@@ -1299,10 +1492,14 @@
                         setTimeout(() => ripple.remove(), 600);
                     }
                 });
+                */
 
                 pageContainer.addEventListener('click', (e) => {
                     const targetImage = e.target.closest('.enlargeable-image');
-                    if (targetImage) imageViewer.open(targetImage.src, pageContainer);
+                    if (targetImage) {
+                        // 确保从 data-src 或 src 获取正确的图片 URL
+                        imageViewer.open(targetImage.dataset.src || targetImage.src, pageContainer);
+                    }
                 });
                 
                 document.querySelectorAll('#main-menu .menu-item[id], #main-menu a.menu-item').forEach((item) => {
