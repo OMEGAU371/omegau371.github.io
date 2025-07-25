@@ -1,7 +1,7 @@
 {
   "servers": [
     {
-      "name": "主游戏服务器",
+      "name": "The Origin 2.0",
       "ip": "frp-leg.com:41711",
       "icon": "router",
       "show_ping": true,
