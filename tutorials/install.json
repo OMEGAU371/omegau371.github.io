@@ -1,0 +1,57 @@
+{
+  "title": "首次安装指南",
+  "steps": [
+    {
+      "id": "step1",
+      "title": "下载必要文件",
+      "image": "install_1.png",
+      "paragraphs": [
+        "万事开头难，但我们已经为您准备好了一切。要开始游戏，您需要两个核心文件：<strong>启动器</strong> 和 <strong>整合包</strong>。",
+        "它们都存放在我们的“档案馆”QQ群文件中，这是一个专门用来存放服务器资源的仓库。"
+      ],
+      "list": [
+        { "icon": "folder-down", "text": "首先，你需要进入 <strong>档案馆QQ群</strong>。如果你还没加群，请先返回主菜单点击链接加入。" },
+        { "icon": "mouse-pointer-click", "text": "在群聊界面顶部，找到并点击 <strong>“文件”</strong> 选项卡，进入群文件列表。" },
+        { "icon": "binary", "text": "在 `联机工具` 文件夹中，下载名为 `PCL2启动器.exe` 的文件。这是我们的游戏启动器。" },
+        { "icon": "package-zip", "text": "接着，在 `整合包` 文件夹中，下载最新的整合包压缩文件（通常以 `.zip` 结尾）。" }
+      ]
+    },
+    {
+      "id": "step2",
+      "title": "配置启动器",
+      "image": "install_2.png",
+      "paragraphs": [
+        "PCL2是一款功能强大且备受好评的第三方启动器。首次运行它时，我们需要进行简单的账户设置来告诉它“你是谁”。"
+      ],
+      "list": [
+        { "icon": "user-check", "color": "#4ade80", "text": "<strong>如果您是正版玩家</strong>：点击启动器主界面的“添加账户”，在弹出的窗口中选择“微软登录”，然后按照网页提示完成您的正版账号登录验证。" },
+        { "icon": "user-cog", "color": "#facc15", "text": "<strong>如果您是离线玩家</strong>：同样点击“添加账户”，但选择“离线模式”。在输入框中填入一个你喜欢的、将在游戏中显示的名字（游戏ID），然后点击确定即可。" }
+      ]
+    },
+    {
+      "id": "step3",
+      "title": "“拖拽”式一键安装",
+      "image": "install_3.png",
+      "paragraphs": [
+        "这是最关键、也是最神奇的一步！你不需要解压任何文件，PCL2启动器会为你处理好一切。",
+        "请直接用鼠标左键按住你下载好的 <code>整合包.zip</code> 文件，将它 <strong>拖拽</strong> 到PCL2启动器的主窗口区域内，然后松开鼠标。启动器会自动识别并弹出一个安装界面，你只需确认安装即可。"
+      ],
+      "notice": {
+        "text": "<strong>请注意：</strong> 此过程会下载游戏本体、加载器和所有模组，根据你的网络情况，可能需要较长时间。如果下载速度异常缓慢，请前往 <strong>PCL2设置 -> 下载</strong> 页面，尝试将“下载源”切换为“官方”或“镜像”。"
+      }
+    },
+    {
+      "id": "step4",
+      "title": "加入服务器，开始冒险！",
+      "image": "install_4.png",
+      "paragraphs": [
+        "一切就绪，欢迎来到我们的世界！"
+      ],
+      "list": [
+        { "icon": "clipboard-copy", "text": "在 <strong>档案馆QQ群</strong> 的 <strong>“群公告”</strong> 中找到最新的服务器IP地址，并复制它。" },
+        { "icon": "play-circle", "text": "在PCL2中选择我们安装好的整合包版本，点击 <strong>“启动游戏”</strong>。" },
+        { "icon": "server", "text": "在游戏主菜单，依次点击 <strong>“多人游戏”</strong> -> <strong>“添加服务器”</strong>，将刚才复制的IP地址粘贴到“服务器地址”一栏，然后点击“完成”即可加入！" }
+      ]
+    }
+  ]
+}

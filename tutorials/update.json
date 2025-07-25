@@ -1,0 +1,26 @@
+{
+  "title": "整合包更新指南",
+  "steps": [
+    {
+      "id": "update-intro",
+      "title": "更新须知",
+      "image": "update_1.png",
+      "paragraphs": [
+        "为了修复Bug或增加新内容，我们会不定期更新整合包。<strong>请务必留意群公告中的更新日志</strong>，并严格按照日志的要求进行操作。不正确的更新可能会导致你的存档损坏或无法进入服务器！"
+      ]
+    },
+    {
+      "id": "update-methods",
+      "title": "模组管理",
+      "image": "update_2.png",
+      "paragraphs": [
+        "所有更新操作都在PCL2启动器中完成。在版本列表中右键点击我们的整合包，选择 <strong>“版本设置”</strong>，然后切换到 <strong>“Mod管理”</strong> 标签页。在这里，你可以看到所有已安装的模组。"
+      ],
+      "list": [
+        { "icon": "plus-circle", "color": "#4ade80", "text": "<strong>添加新模组</strong>：如果更新日志要求添加新模组，请先在 `档案馆 -> 群文件 -> 追加模组` 文件夹中下载对应的文件。然后，只需将下载好的 `.jar` 文件拖拽进PCL2的Mods管理窗口即可。" },
+        { "icon": "trash-2", "color": "#f87171", "text": "<strong>删除旧模组</strong>：如果更新日志要求删除某个模组，只需在Mods列表中找到它，右键点击并选择 <strong>“删除文件”</strong>。" },
+        { "icon": "refresh-cw", "color": "#facc15", "text": "<strong>更新现有模组</strong>：PCL2自带便捷的模组更新功能。你可以在Mods管理界面选中需要更新的模组，点击上方的“更新”按钮尝试自动更新。如果自动更新失败，则需要手动下载新版模组文件，然后删除旧版、拖入新版。" }
+      ]
+    }
+  ]
+}
