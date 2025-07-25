@@ -869,7 +869,7 @@
 
                     const checkIconElement = document.createElement('i');
                     checkIconElement.setAttribute('data-lucide', 'check');
-                    checkIconElement.classList.add('copy-icon');
+                    checkIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon'); // 确保显式添加尺寸和颜色类
                     button.appendChild(checkIconElement);
                     lucide.createIcons({ container: button });
 
@@ -884,7 +884,7 @@
 
                         const copyIconElement = document.createElement('i');
                         copyIconElement.setAttribute('data-lucide', 'copy');
-                        copyIconElement.classList.add('copy-icon');
+                        copyIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon'); // 确保显式添加尺寸和颜色类
                         button.appendChild(copyIconElement);
                         lucide.createIcons({ container: button });
                         
