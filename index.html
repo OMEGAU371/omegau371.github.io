@@ -60,6 +60,7 @@
             position: relative;
             overflow: hidden;
         }
+        /* 移除了鼠标悬停在按钮上的流光效果 */
         .menu-item::before {
             content: '';
             position: absolute;
@@ -69,14 +70,15 @@
             height: 100%;
             background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(167, 139, 250, 0.4), transparent 40%);
             border-radius: inherit;
-            opacity: 0;
+            opacity: 0; /* 始终保持不可见 */
             transition: opacity 0.5s;
             z-index: 0;
         }
-        .menu-item:hover::before, .menu-item:focus-visible::before { opacity: 1; }
+        /* 移除了 hover 时设置 opacity 为 1 的规则 */
+        /* .menu-item:hover::before, .menu-item:focus-visible::before { opacity: 1; } */
+
         .menu-item:hover, .menu-item:focus-visible {
             outline: none;
-            /* 移除了缩放动画，避免与错误提示层冲突 */
             transform: translateY(-5px); /* 保留呼吸感，但移除缩放 */
             background-color: var(--card-hover-bg-color);
             border-color: rgba(167, 139, 250, 0.5);
@@ -522,14 +524,14 @@
             };
 
             const showTutorialDetailPage = (tutorialId) => {
-                window.location.hash = `tutorials/${tutorialId}`;
+                window.location.hash = 'tutorials/${tutorialId}';
                 transitionToPage(async () => {
                     pageContainer.innerHTML = `
                         <div class="flex items-center mb-6 animate-swoop-in"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 id="tutorial-title" class="text-3xl font-bold text-white"></h1></div>
                         <div id="wiki-content" class="w-full">${createLoadingPlaceholder(1)}</div>`;
                         document.getElementById('btn-back').addEventListener('click', () => window.location.hash = 'tutorials');
 
-                    const tutorialData = await fetchData(`./tutorials/${tutorialId}.json`);
+                    const tutorialData = await fetchData('./tutorials/${tutorialId}.json');
                     if (!tutorialData) {
                         document.getElementById('wiki-content').innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center content-card"><i data-lucide="file-question" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">无法加载教程</h3><p class="mt-1 text-sm text-gray-400">未能加载教程内容。</p></div>`;
                         lucide.createIcons();
@@ -544,7 +546,7 @@
 
                         return `
                         <div class="content-card p-6 rounded-2xl" style="background-color: var(--card-bg-color); border: 1px solid var(--border-color); animation-delay:${index*100}ms">
-                            ${step.image ? `<img src="./tutorials/${step.image}" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="${step.title}" >` : ''}
+                            ${step.image ? `<img src="./tutorials/${step.image}" class="w-full rounded-2xl mb-4 cursor-pointer enlargeable-image" onerror="this.onerror=null;this.src='https://placehold.co/1200x600/1f2937/9ca3af?text=Image+Not+Found';" alt="${step.title}" >` : ''}
                             <div class="flex items-center mb-4">
                                 <div class="bg-sky-500/20 text-sky-400 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl mr-4 flex-shrink-0">${index + 1}</div>
                                 <h2 id="${step.id}" class="text-2xl font-bold text-white">${step.title}</h2>
@@ -615,7 +617,7 @@
                             const contentHtml = (entry.content || []).map(section => {
                                 const iconMap = { add: 'plus-circle', fix: 'wrench', delete: 'trash-2', change: 'shuffle' };
                                 const colorMap = { add: 'text-green-400', fix: 'text-yellow-400', delete: 'text-red-400', change: 'text-blue-400' };
-                                const itemsHtml = (section.items || []).map(item => `<li class="flex items-start"><i data-lucide="dot" class="w-4 h-4 mr-2 mt-1 flex-shrink-0 text-gray-500"></i><span>${parseContentString(item)}</span></li>`).join('');
+                                const itemsHtml = (section.items || []).map(item => `<li class="flex items-start"><i data-lucide="dot" class="w-4 h-4 mr-2 mt-1 flex-shrink-0" text-gray-500"></i><span>${parseContentString(item)}</span></li>`).join('');
                                 return `<h3 class="text-lg font-semibold ${colorMap[section.type] || 'text-gray-300'} flex items-center mt-4 mb-2"><i data-lucide="${iconMap[section.type] || 'info'}" class="mr-2"></i>${section.title}</h3><ul class="space-y-2">${itemsHtml}</ul>`;
                             }).join('');
                             return `<div class="content-card p-6 rounded-2xl" style="background-color: var(--card-bg-color); border: 1px solid var(--border-color); animation-delay:${index*100}ms">
