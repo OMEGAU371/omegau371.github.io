@@ -7,13 +7,12 @@
       "image": "install_1.png",
       "paragraphs": [
         "万事开头难，但我们已经为您准备好了一切。要开始游戏，您需要两个核心文件：<strong>启动器</strong> 和 <strong>整合包</strong>。",
-        "它们都存放在我们的“档案馆”QQ群文件中，这是一个专门用来存放服务器资源的仓库。"
+        "这些文件现在都可以在我们的 <strong>资源获取</strong> 页面中找到，一键下载，方便快捷。"
       ],
       "list": [
-        { "icon": "folder-down", "text": "首先，你需要进入 <strong>档案馆QQ群</strong>。如果你还没加群，请先返回主菜单点击链接加入。" },
-        { "icon": "mouse-pointer-click", "text": "在群聊界面顶部，找到并点击 <strong>“文件”</strong> 选项卡，进入群文件列表。" },
-        { "icon": "binary", "text": "在 `联机工具` 文件夹中，下载名为 `PCL2启动器.exe` 的文件。这是我们的游戏启动器。" },
-        { "icon": "folder-archive", "text": "接着，在 `整合包` 文件夹中，下载最新的整合包压缩文件（通常以 `.zip` 结尾）。" }
+        { "icon": "package", "text": "点击主菜单的 <i-link:[package-open](资源获取)];[#resources]> 按钮，进入资源获取页面。" },
+        { "icon": "binary", "text": "在资源获取页面，转到下载 `PCL2启动器` 的页面，您可以在那里下载它。这是我们推荐的游戏启动器。" },
+        { "icon": "folder-archive", "text": "接着，下载最新的整合包压缩文件（通常以 `.zip` 结尾）。" }
       ]
     },
     {
@@ -48,9 +47,9 @@
         "一切就绪，欢迎来到我们的世界！"
       ],
       "list": [
-        { "icon": "clipboard-copy", "text": "在 <strong>档案馆QQ群</strong> 的 <strong>“群公告”</strong> 中找到最新的服务器IP地址，并复制它。" },
+        { "icon": "server", "text": "点击主菜单的 <i-link:[server](服务器地址)];[#server-status]> 按钮，进入服务器地址页面，找到并复制最新的服务器IP地址。" },
         { "icon": "play-circle", "text": "在PCL2中选择我们安装好的整合包版本，点击 <strong>“启动游戏”</strong>。" },
-        { "icon": "server", "text": "在游戏主菜单，依次点击 <strong>“多人游戏”</strong> -> <strong>“添加服务器”</strong>，将刚才复制的IP地址粘贴到“服务器地址”一栏，然后点击“完成”即可加入！" }
+        { "icon": "plug-zap", "text": "在游戏主菜单，依次点击 <strong>“多人游戏”</strong> -> <strong>“添加服务器”</strong>，将刚才复制的IP地址粘贴到“服务器地址”一栏，然后点击“完成”即可加入！" }
       ]
     }
   ]
