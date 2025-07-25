@@ -13,7 +13,7 @@
         { "icon": "folder-down", "text": "首先，你需要进入 <strong>档案馆QQ群</strong>。如果你还没加群，请先返回主菜单点击链接加入。" },
         { "icon": "mouse-pointer-click", "text": "在群聊界面顶部，找到并点击 <strong>“文件”</strong> 选项卡，进入群文件列表。" },
         { "icon": "binary", "text": "在 `联机工具` 文件夹中，下载名为 `PCL2启动器.exe` 的文件。这是我们的游戏启动器。" },
-        { "icon": "package-zip", "text": "接着，在 `整合包` 文件夹中，下载最新的整合包压缩文件（通常以 `.zip` 结尾）。" }
+        { "icon": "folder-archive", "text": "接着，在 `整合包` 文件夹中，下载最新的整合包压缩文件（通常以 `.zip` 结尾）。" }
       ]
     },
     {
