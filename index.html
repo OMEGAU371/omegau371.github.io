@@ -154,7 +154,7 @@
         .in-field-error-display .feedback-icon { width: 16px; height: 16px; margin-right: 8px; }
         .input-field.text-temporarily-hidden { color: transparent !important; }
         
-        button#btn-submit-issue { position: relative; overflow: hidden; border-radius: 12px; border: none; font-weight: 600; width: 100%; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; cursor: pointer; background: linear-gradient(120deg, #f97316, #ea580c); color: white; font-size: 1rem; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.25); margin-top: 1rem; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        button#btn-submit-issue { position: relative; overflow: hidden; border-radius: 12px; border: none; font-weight: 600; width: 100%; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; cursor: pointer; background: linear-gradient(120deg, #f97316, #ea580c); color: white; font-size: 1rem; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.25); margin-top: 1rem; padding: 12px; display: flex; align-items: center; justify: center; gap: 0.5rem; }
         button#btn-submit-issue:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(249, 115, 22, 0.35); }
         
         .markdown-editor-container { position: relative; }
@@ -602,7 +602,7 @@
                     lucide.createIcons();
                 });
             };
-            
+
             const showResources = () => {
                 window.location.hash = 'resources';
                  transitionToPage(async () => {
@@ -685,7 +685,15 @@
             const showIssuesListPage = () => {
                 window.location.hash = 'view-issues';
                 transitionToPage(() => {
-                    pageContainer.innerHTML = `<div class="flex items-center mb-6 animate-swoop-in"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">现有问题列表</h1></div>${createLoadingPlaceholder()}`;
+                    pageContainer.innerHTML = `<div class="flex items-center mb-6 animate-swoop-in"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 class="text-3xl font-bold text-white">现有问题列表</h1></div>
+                        <div class="flex space-x-4 mb-6 animate-in">
+                            <button id="tab-open-issues" class="px-5 py-2 rounded-lg text-white font-semibold bg-sky-500/80 hover:bg-sky-600/80 transition-colors">未解决 (Open)</button>
+                            <button id="tab-closed-issues" class="px-5 py-2 rounded-lg text-white font-semibold bg-gray-700/50 hover:bg-gray-700 transition-colors">已解决 (Closed)</button>
+                        </div>
+                        <div id="issues-list-display" class="space-y-4">
+                            ${createLoadingPlaceholder(3)}
+                        </div>
+                    `;
                     document.getElementById('btn-back').addEventListener('click', showMainMenu);
                     loadGithubIssues();
                 });
@@ -869,7 +877,7 @@
 
                     const checkIconElement = document.createElement('i');
                     checkIconElement.setAttribute('data-lucide', 'check');
-                    checkIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon'); // 确保显式添加尺寸和颜色类
+                    checkIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon');
                     button.appendChild(checkIconElement);
                     lucide.createIcons({ container: button });
 
@@ -884,7 +892,7 @@
 
                         const copyIconElement = document.createElement('i');
                         copyIconElement.setAttribute('data-lucide', 'copy');
-                        copyIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon'); // 确保显式添加尺寸和颜色类
+                        copyIconElement.classList.add('w-4', 'h-4', 'text-gray-400', 'copy-icon');
                         button.appendChild(copyIconElement);
                         lucide.createIcons({ container: button });
                         
@@ -1416,41 +1424,124 @@
                 linkModal.querySelector('.modal-bg').addEventListener('click', closeLinkModal);
             };
 
-            const loadGithubIssues = async () => { 
-                const container = pageContainer.querySelector('div:last-child');
+            const fetchIssueComments = async (issue) => {
                 try {
-                    const response = await fetch(`https://api.github.com/repos/${githubRepo}/issues`);
+                    const response = await fetch(issue.comments_url);
+                    if (!response.ok) throw new Error(`GitHub API error fetching comments: ${response.statusText}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error(`Error fetching comments for issue ${issue.number}:`, error);
+                    return [];
+                }
+            };
+
+            const loadGithubIssues = async () => { 
+                const issuesListDisplay = document.getElementById('issues-list-display');
+                issuesListDisplay.innerHTML = createLoadingPlaceholder(3);
+
+                let allIssues = [];
+                let openIssues = [];
+                let closedIssues = [];
+
+                try {
+                    const response = await fetch(`https://api.github.com/repos/${githubRepo}/issues?state=all&per_page=100`); // Fetch all states, up to 100 issues
                     if (!response.ok) throw new Error(`GitHub API error: ${response.statusText}`);
-                    const issues = await response.json();
-                    if (issues.length === 0) {
-                        container.innerHTML = `<div class="p-8 rounded-2xl text-center content-card skeleton-loader" style="background-color: var(--skeleton-bg); border: 1px solid var(--border-color);"><i data-lucide="shield-check" class="mx-auto h-12 w-12 text-green-500"></i><h3 class="mt-4 text-lg font-medium text-white">太棒了！</h3><p class="mt-1 text-sm text-gray-400">当前没有任何待解决的问题。</p></div>`;
-                    } else {
-                        container.innerHTML = `<div class="space-y-4">${issues.map((issue, index) => {
+                    allIssues = await response.json();
+
+                    allIssues.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                    openIssues = allIssues.filter(issue => issue.state === 'open');
+                    closedIssues = allIssues.filter(issue => issue.state === 'closed');
+
+                    const renderIssues = async (issueArray, type) => {
+                        if (issueArray.length === 0) {
+                            return `<div class="p-8 rounded-2xl text-center content-card skeleton-loader" style="background-color: var(--skeleton-bg); border: 1px solid var(--border-color);">
+                                        <i data-lucide="${type === 'open' ? 'shield-check' : 'check-check'}" class="mx-auto h-12 w-12 text-gray-500"></i>
+                                        <h3 class="mt-4 text-lg font-medium text-white">${type === 'open' ? '太棒了！' : '暂无已解决问题'}</h3>
+                                        <p class="mt-1 text-sm text-gray-400">${type === 'open' ? '当前没有任何待解决的问题。' : '目前没有已解决的问题记录。'}</p>
+                                    </div>`;
+                        }
+
+                        const issueHtmlPromises = issueArray.map(async (issue, index) => {
                             const date = new Date(issue.created_at).toLocaleDateString('zh-CN');
                             const stateClass = issue.state === 'open' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400';
                             const stateText = issue.state === 'open' ? '未解决' : '已解决';
-                            return `
-                            <div class="content-card p-6 rounded-2xl hover:border-sky-500/50 transition-colors duration-300" style="background-color: var(--card-bg-color); border: 1px solid var(--border-color); animation-delay:${index*100}ms">
-                                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
-                                    <h2 class="text-xl font-bold text-white">${issue.title}</h2>
-                                    <span class="text-sm font-semibold px-3 py-1 rounded-full self-start ${stateClass}">${stateText}</span>
-                                </div>
-                                <div class="text-gray-400 space-y-3 prose prose-invert max-w-none prose-p:my-1 prose-blockquote:my-2">${parseContentString(issue.body, true)}</div>
-                                <div class="mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4" style="border-color: var(--border-color);">
-                                    <div class="flex items-center gap-2 text-sm text-gray-500">
-                                        <img src="${issue.user.avatar_url}" class="w-6 h-6 rounded-full">
-                                        <span><strong>${issue.user.login}</strong> 于 ${date} 创建 · #${issue.number}</span>
+
+                            const comments = await fetchIssueComments(issue);
+                            const commentsHtml = comments.length > 0 ? comments.map(comment => {
+                                const commentDate = new Date(comment.created_at).toLocaleDateString('zh-CN') + ' ' + new Date(comment.created_at).toLocaleTimeString('zh-CN');
+                                return `
+                                    <div class="flex items-start space-x-3 p-4 bg-gray-900/50 rounded-lg">
+                                        <img src="${comment.user.avatar_url}" class="w-8 h-8 rounded-full flex-shrink-0">
+                                        <div class="flex-grow">
+                                            <p class="text-sm font-semibold text-white">${comment.user.login} <span class="text-gray-400 font-normal text-xs ml-2">${commentDate}</span></p>
+                                            <div class="text-gray-300 prose prose-invert max-w-none prose-p:my-1 prose-blockquote:my-2 mt-1">${parseContentString(comment.body, true)}</div>
+                                        </div>
                                     </div>
-                                    <a href="${issue.html_url}" target="_blank" rel="noopener noreferrer" class="bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 text-sm font-semibold inline-flex items-center px-4 py-2 rounded-lg transition-colors">在 GitHub 上查看 <i data-lucide="external-link" class="w-4 h-4 ml-1.5"></i></a>
-                                </div>
-                            </div>`;
-                        }).join('')}</div>`;
-                    }
+                                `;
+                            }).join('') : `<p class="text-gray-500 text-sm mt-4">暂无评论。</p>`;
+
+                            const bodyContent = issue.body ? `<div class="text-gray-400 space-y-3 prose prose-invert max-w-none prose-p:my-1 prose-blockquote:my-2">${parseContentString(issue.body, true)}</div>` : '<p class="text-gray-500 text-sm italic">无详细描述。</p>';
+
+                            return `
+                                <div class="content-card p-6 rounded-2xl hover:border-sky-500/50 transition-colors duration-300" style="background-color: var(--card-bg-color); border: 1px solid var(--border-color); animation-delay:${index*100}ms">
+                                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                                        <h2 class="text-xl font-bold text-white flex items-center">
+                                            ${issue.labels.map(label => `<span class="text-xs font-medium px-2 py-1 rounded-full mr-2" style="background-color: #${label.color}33; color: #${label.color};">${label.name}</span>`).join('')}
+                                            ${issue.title}
+                                        </h2>
+                                        <span class="text-sm font-semibold px-3 py-1 rounded-full self-start ${stateClass}">${stateText}</span>
+                                    </div>
+                                    
+                                    ${bodyContent}
+
+                                    <div class="mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4" style="border-color: var(--border-color);">
+                                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                                            <img src="${issue.user.avatar_url}" class="w-6 h-6 rounded-full">
+                                            <span><strong>${issue.user.login}</strong> 于 ${date} 创建 · #${issue.number}</span>
+                                        </div>
+                                        <a href="${issue.html_url}" target="_blank" rel="noopener noreferrer" class="bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 text-sm font-semibold inline-flex items-center px-4 py-2 rounded-lg transition-colors">在 GitHub 上查看 <i data-lucide="external-link" class="w-4 h-4 ml-1.5"></i></a>
+                                    </div>
+
+                                    <div class="mt-6 border-t pt-4 border-gray-700">
+                                        <h4 class="text-lg font-semibold text-white mb-3 flex items-center"><i data-lucide="message-square" class="w-5 h-5 mr-2"></i>评论 (${comments.length})</h4>
+                                        <div class="comments-section space-y-3">
+                                            ${commentsHtml}
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                        return Promise.all(issueHtmlPromises);
+                    };
+
+                    const displayIssues = async (issueArray, tabType) => {
+                        issuesListDisplay.innerHTML = await renderIssues(issueArray, tabType);
+                        lucide.createIcons({ container: issuesListDisplay });
+                    };
+
+                    document.getElementById('tab-open-issues').addEventListener('click', () => {
+                        document.getElementById('tab-open-issues').classList.add('bg-sky-500/80', 'hover:bg-sky-600/80');
+                        document.getElementById('tab-open-issues').classList.remove('bg-gray-700/50', 'hover:bg-gray-700');
+                        document.getElementById('tab-closed-issues').classList.remove('bg-sky-500/80', 'hover:bg-sky-600/80');
+                        document.getElementById('tab-closed-issues').classList.add('bg-gray-700/50', 'hover:bg-gray-700');
+                        displayIssues(openIssues, 'open');
+                    });
+
+                    document.getElementById('tab-closed-issues').addEventListener('click', () => {
+                        document.getElementById('tab-closed-issues').classList.add('bg-sky-500/80', 'hover:bg-sky-600/80');
+                        document.getElementById('tab-closed-issues').classList.remove('bg-gray-700/50', 'hover:bg-gray-700');
+                        document.getElementById('tab-open-issues').classList.remove('bg-sky-500/80', 'hover:bg-sky-600/80');
+                        document.getElementById('tab-open-issues').classList.add('bg-gray-700/50', 'hover:bg-gray-700');
+                        displayIssues(closedIssues, 'closed');
+                    });
+
+                    displayIssues(openIssues, 'open');
+
                 } catch (error) {
                     console.error("加载 GitHub Issues 失败:", error);
-                    container.innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center"><i data-lucide="wifi-off" class="mx-auto h-12 w-12 text-yellow-500"></i><h3 class="mt-4 text-lg font-medium text-white">加载失败</h3><p class="mt-1 text-sm text-gray-400">无法连接到 GitHub。请稍后再试。</p></div>`;
+                    issuesListDisplay.innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center content-card skeleton-loader" style="background-color: var(--skeleton-bg); border: 1px solid var(--border-color);"><i data-lucide="wifi-off" class="mx-auto h-12 w-12 text-yellow-500"></i><h3 class="mt-4 text-lg font-medium text-white">加载失败</h3><p class="mt-1 text-sm text-gray-400">无法连接到 GitHub 或达到 API 速率限制。请稍后再试。</p></div>`;
                 } finally {
-                    lucide.createIcons();
+                    lucide.createIcons(); 
                 }
             };
 
