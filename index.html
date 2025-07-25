@@ -495,14 +495,14 @@
             };
 
             const showTutorialDetailPage = (tutorialId) => {
-                window.location.hash = 'tutorials/${tutorialId}';
+                window.location.hash = `tutorials/${tutorialId}`;
                 transitionToPage(async () => {
                     pageContainer.innerHTML = `
                         <div class="flex items-center mb-6 animate-swoop-in"><button id="btn-back" class="p-2 mr-4 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-700/50 rounded-full transition-colors"><i data-lucide="arrow-left"></i></button><h1 id="tutorial-title" class="text-3xl font-bold text-white"></h1></div>
                         <div id="wiki-content" class="w-full">${createLoadingPlaceholder(1)}</div>`;
                         document.getElementById('btn-back').addEventListener('click', () => window.location.hash = 'tutorials');
 
-                    const tutorialData = await fetchData('./tutorials/${tutorialId}.json');
+                    const tutorialData = await fetchData(`./tutorials/${tutorialId}.json`);
                     if (!tutorialData) {
                         document.getElementById('wiki-content').innerHTML = `<div class="bg-gray-800/80 p-8 rounded-2xl text-center content-card"><i data-lucide="file-question" class="mx-auto h-12 w-12 text-gray-500"></i><h3 class="mt-4 text-lg font-medium text-white">无法加载教程</h3><p class="mt-1 text-sm text-gray-400">未能加载教程内容。</p></div>`;
                         lucide.createIcons();
