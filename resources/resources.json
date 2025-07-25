@@ -1,5 +1,17 @@
 [
-    {
+  {
+    "title": "主要资源",
+    "date": "2025-07-25",
+    "description": "日常维护、更新资源。",
+    "buttons": [
+      {
+        "icon": "folder-archive",
+        "text": "The Origin 1.0.9",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/5/The%20Origin%202.0%201.0.9.zip"
+      }
+    ]
+  },
+  {
     "title": "主要资源",
     "date": "2025-07-25",
     "description": "日常维护、更新资源。",
