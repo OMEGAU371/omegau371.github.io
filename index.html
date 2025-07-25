@@ -60,7 +60,6 @@
             position: relative;
             overflow: hidden;
         }
-        /* 移除了鼠标悬停在按钮上的流光效果 */
         .menu-item::before {
             content: '';
             position: absolute;
@@ -70,22 +69,19 @@
             height: 100%;
             background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(167, 139, 250, 0.4), transparent 40%);
             border-radius: inherit;
-            opacity: 0; /* 始终保持不可见 */
+            opacity: 0;
             transition: opacity 0.5s;
             z-index: 0;
         }
-        /* 移除了 hover 时设置 opacity 为 1 的规则 */
-        /* .menu-item:hover::before, .menu-item:focus-visible::before { opacity: 1; } */
 
         .menu-item:hover, .menu-item:focus-visible {
             outline: none;
-            transform: translateY(-5px); /* 保留呼吸感，但移除缩放 */
+            transform: translateY(-5px);
             background-color: var(--card-hover-bg-color);
             border-color: rgba(167, 139, 250, 0.5);
             box-shadow: 0 0 30px rgba(79, 70, 229, 0.3);
         }
 
-        /* 全新的、更丰富的动画 */
         @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes swoopIn { from { opacity: 0; transform: translateY(-30px) scale(0.95) skewY(-2deg); } to { opacity: 1; transform: translateY(0) scale(1) skewY(0); } }
         .animate-in { opacity: 0; animation: fadeInSlideUp 0.5s ease-out forwards; }
@@ -94,7 +90,7 @@
         .gradient-text { background: linear-gradient(90deg, var(--accent-color-start), var(--accent-color-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .menu-item .menu-item-arrow { transition: transform 0.3s ease; }
-        .menu-item:hover .menu-item-arrow, .menu-item:focus-visible .menu-item-arrow { transform: translateX(5px) rotate(-5deg); } /* 图标微动画 */
+        .menu-item:hover .menu-item-arrow, .menu-item:focus-visible .menu-item-arrow { transform: translateX(5px) rotate(-5deg); }
         
         .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
         .modal-box { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background-color: rgba(13, 12, 34, 0.8); backdrop-filter: blur(20px); border-color: var(--border-color); }
@@ -120,7 +116,7 @@
         
         #gallery-carousel { aspect-ratio: 16 / 9; transition: opacity 0.5s ease; border: 1px solid var(--border-color); }
         .carousel-slide { transition: opacity 0.6s ease-in-out; background-size: cover; background-position: center; }
-        .carousel-dot { background-color: var(--accent-color-end); } /* Active state is handled separately */
+        .carousel-dot { background-color: var(--accent-color-end); }
         
         #image-viewer-modal .modal-box { transform: scale(1); background: transparent; }
         .image-viewer-img { position: absolute; max-width: 95%; max-height: 95%; cursor: grab; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-in-out; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; }
@@ -134,10 +130,8 @@
         .input-group { 
             position: relative; 
             width: 100%; 
-            /* 移除了 input-group 的缩放，避免与内部的错误提示层冲突 */
             transition: all 0.2s ease-out; 
         }
-        /* 移除了 input-group:hover 的 transform: scale(1.02) */
         .input-field { background-color: var(--card-bg-color); border: 1.5px solid var(--border-color); padding: 0 45px 0 18px; width: 100%; border-radius: 12px; color: var(--text-color); font-size: 0.9rem; transition: all 0.3s ease; height: 52px; position: relative; z-index: 1; box-sizing: border-box; }
         .input-field:focus { outline: none; border-color: var(--accent-color-end); background-color: var(--card-hover-bg-color); box-shadow: 0 0 0 3.5px rgba(167, 139, 250, 0.25); }
         .input-label { position: absolute; left: 18px; top: 0; height: 52px; display: flex; align-items: center; font-size: 0.9rem; color: #9ca3af; pointer-events: none; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3; }
@@ -160,16 +154,6 @@
         .in-field-error-display .feedback-icon { width: 16px; height: 16px; margin-right: 8px; }
         .input-field.text-temporarily-hidden { color: transparent !important; }
         
-        /* 波纹点击效果 (已移除，故此CSS不再生效) */
-        /* .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.6);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-        }
-        @keyframes ripple { to { transform: scale(4); opacity: 0; } } */
-
         button#btn-submit-issue { position: relative; overflow: hidden; border-radius: 12px; border: none; font-weight: 600; width: 100%; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; cursor: pointer; background: linear-gradient(120deg, #f97316, #ea580c); color: white; font-size: 1rem; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.25); margin-top: 1rem; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
         button#btn-submit-issue:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 25px rgba(249, 115, 22, 0.35); }
         
@@ -185,7 +169,6 @@
         #md-toolbar button { background: transparent; border: none; padding: 6px; border-radius: 6px; color: #9ca3af; cursor: pointer; transition: background-color 0.2s, color 0.2s, transform 0.2s; flex-shrink: 0; }
         #md-toolbar button:hover { background-color: rgba(55, 65, 81, 0.7); color: #fff; transform: scale(1.1); }
         
-        /* 流光骨架屏 */
         @keyframes shimmer { 100% { transform: translateX(100%); } }
         .skeleton-loader { 
             position: relative;
@@ -205,7 +188,6 @@
             animation: shimmer 1.5s infinite;
         }
         
-        /* 服务器地址页面专属样式 */
         .ip-copy-btn {
             background-color: rgba(55, 65, 81, 0.5);
             transition: all 0.3s ease;
@@ -227,35 +209,33 @@
             transition: color 0.5s ease, background-color 0.5s ease;
         }
 
-        /* Carousel and Image Viewer Dots Optimization */
         .carousel-dot {
-            width: 8px; /* Default size */
+            width: 8px;
             height: 8px;
-            background-color: rgba(255, 255, 255, 0.4); /* Inactive dot color */
+            background-color: rgba(255, 255, 255, 0.4);
             border-radius: 50%;
             transition: all 0.3s ease;
             cursor: pointer;
-            border: 1px solid transparent; /* Subtle border for inactive */
+            border: 1px solid transparent;
         }
         .carousel-dot:hover {
             background-color: rgba(255, 255, 255, 0.6);
         }
         .carousel-dot.active {
-            background-color: var(--accent-color-end); /* Active color */
-            transform: scale(1.5); /* Larger for active state */
+            background-color: var(--accent-color-end);
+            transform: scale(1.5);
             border-color: var(--accent-color-end);
-            box-shadow: 0 0 5px var(--accent-color-end); /* Subtle glow for active */
+            box-shadow: 0 0 5px var(--accent-color-end);
         }
 
-        /* Image Viewer Specific Dots */
         #image-viewer-dots .carousel-dot {
-            background-color: rgba(255, 255, 255, 0.6); /* Slightly brighter for viewer */
+            background-color: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         #image-viewer-dots .carousel-dot.active-viewer-dot {
             background-color: var(--accent-color-end);
-            transform: scale(1.2); /* Slightly larger in viewer */
-            box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.5); /* Subtle glow */
+            transform: scale(1.2);
+            box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.5);
         }
 
     </style>
@@ -376,15 +356,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Global State & Constants ---
             const mainMenu = document.getElementById('main-menu');
             const pageContainer = document.getElementById('page-container');
             const tocWidget = document.getElementById('toc-widget');
             const animationDuration = 300;
             const githubRepo = 'OMEGAU371/omegau371.github.io';
-            let activePingIntervals = []; // 用于存储所有活跃的ping定时器
+            let activePingIntervals = [];
 
-            // --- Utility Functions ---
             const fetchData = async (filePath) => {
                 try {
                     const response = await fetch(filePath);
@@ -396,7 +374,6 @@
                 }
             };
 
-            // --- Page Navigation & Rendering ---
             const navigate = (hash) => {
                 const [page, subpage] = hash.replace('#', '').toLowerCase().split('/');
                 if (mainMenu.classList.contains('hidden') && !page) return showMainMenu();
@@ -406,15 +383,13 @@
                     'resources': showResources,
                     'report-issue': showReportIssuePage,
                     'view-issues': showIssuesListPage,
-                    'server-status': showServerStatusPage // 新增路由
+                    'server-status': showServerStatusPage
                 };
                 (routes[page] || showMainMenu)();
             };
 
             const transitionToPage = (pageRenderer) => {
-                // BUG FIX: 默认隐藏TOC，只有教程详情页会再次显示它
                 tocWidget.classList.add('opacity-0', 'invisible');
-                // 清除所有正在运行的 ping 定时器
                 activePingIntervals.forEach(clearInterval);
                 activePingIntervals = [];
 
@@ -429,13 +404,11 @@
                 }, animationDuration);
             };
             
-            // 优化：只在页面初次加载时显示主菜单的动画，返回时不显示
             let isInitialLoad = true; 
             const showMainMenu = () => {
                 if(window.location.hash) window.location.hash = '';
                 pageContainer.classList.add('slide-out-right');
                 
-                // 清除所有正在运行的 ping 定时器
                 activePingIntervals.forEach(clearInterval);
                 activePingIntervals = [];
 
@@ -446,14 +419,12 @@
                     mainMenu.classList.remove('hidden');
                     mainMenu.classList.add('slide-in-left');
 
-                    // 只在初次加载时为主菜单项应用动画
                     if (isInitialLoad) {
                         document.querySelectorAll('#main-menu .menu-item[id], #main-menu a.menu-item').forEach((item, index) => {
                            item.style.animation = `fadeInSlideUp 0.5s ease-out ${index * 70}ms forwards`;
                         });
-                        isInitialLoad = false; // 动画只执行一次
+                        isInitialLoad = false;
                     } else {
-                        // 移除可能存在的动画样式，确保返回时没有多余动画
                         document.querySelectorAll('#main-menu .menu-item[id], #main-menu a.menu-item').forEach((item) => {
                            item.style.animation = 'none';
                         });
@@ -720,7 +691,6 @@
                 });
             };
             
-            // --- NEW: Server Status Page ---
             const showServerStatusPage = () => {
                 window.location.hash = 'server-status';
                 transitionToPage(() => {
@@ -763,7 +733,6 @@
                 let mapSrc = '';
 
                 try {
-                    // Step 1: Attempt to get precise geolocation from the browser
                     const position = await new Promise((resolve, reject) => {
                         if (navigator.geolocation) {
                             navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -782,7 +751,6 @@
                     userInfoHtml += `<p class="flex items-center gap-2 text-gray-300"><i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>精确经纬度: <strong class="text-white">${lat.toFixed(4)}, ${lon.toFixed(4)}</strong></p>`;
                     userInfoHtml += `<p class="flex items-center gap-2 text-green-400"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>位置信息已通过浏览器高精度定位获取。</p>`;
 
-                    // Attempt IP for ISP/IP Address even if geolocation is successful
                     const ipRes = await fetch('https://api.ipify.org?format=json');
                     const ipData = await ipRes.json();
                     const userIp = ipData.ip;
@@ -799,7 +767,6 @@
                     mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&output=embed`;
 
                 } catch (geoError) {
-                    // Step 2: Fallback to IP-based geolocation if browser geolocation fails or is denied
                     console.warn('Geolocation failed or denied, falling back to IP-based location:', geoError);
                     try {
                         const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -819,12 +786,10 @@
 
                             mapSrc = `https://maps.google.com/maps?q=${lat},${lon}&hl=zh-CN&z=11&output=embed`;
                         } else {
-                            // Both geolocation and IP-API failed
                             userInfoHtml = `<p class="flex items-center gap-2 text-red-400"><i data-lucide="x-circle"></i>无法获取您的连接信息。</p>`;
                             console.error("IP-based geolocation also failed:", geoData);
                         }
                     } catch (ipError) {
-                        // Both geolocation and IP-API network request failed
                         userInfoHtml = `<p class="flex items-center gap-2 text-red-400"><i data-lucide="x-circle"></i>无法获取您的连接信息。</p>`;
                         console.error("Failed to get IP-based location:", ipError);
                     }
@@ -846,7 +811,6 @@
             
             const renderServerList = async () => {
                 const container = document.getElementById('server-list-container');
-                // Updated path to ip/server.json
                 const ipData = await fetchData('./ip/server.json'); 
                 
                 if (!ipData || !ipData.servers || ipData.servers.length === 0) {
@@ -896,45 +860,37 @@
                 const ip = button.dataset.ip;
                 navigator.clipboard.writeText(ip).then(() => {
                     const ipTextSpan = button.querySelector('.ip-text');
-                    const originalIpText = ipTextSpan.textContent; // Store original text
+                    const originalIpText = ipTextSpan.textContent;
                     
-                    // 查找并移除当前的图标 (可能是 <svg> 或原生的 <i>)
                     let currentIcon = button.querySelector('.copy-icon'); 
                     if (currentIcon) {
                         currentIcon.remove();
                     }
 
-                    // 创建一个新的 <i> 元素用于对勾图标
                     const checkIconElement = document.createElement('i');
                     checkIconElement.setAttribute('data-lucide', 'check');
-                    checkIconElement.classList.add('copy-icon'); // 保持类名以便 Lucide 识别
-                    button.appendChild(checkIconElement); // 添加新 <i> 标签到按钮
+                    checkIconElement.classList.add('copy-icon');
+                    button.appendChild(checkIconElement);
+                    lucide.createIcons({ container: button });
 
                     button.classList.add('copied');
                     ipTextSpan.textContent = '已复制!';
                     
-                    // 重新创建按钮中的 Lucide 图标 (会把新加的 <i> 变成 <svg>)
-                    lucide.createIcons({ container: button });
-
                     setTimeout(() => {
-                        // 移除当前的对勾图标 (现在它是一个 <svg>)
                         let checkIconSvg = button.querySelector('.copy-icon');
                         if (checkIconSvg) {
                             checkIconSvg.remove();
                         }
 
-                        // 创建一个新的 <i> 元素用于复制图标
                         const copyIconElement = document.createElement('i');
                         copyIconElement.setAttribute('data-lucide', 'copy');
-                        copyIconElement.classList.add('copy-icon'); // 保持类名
-                        button.appendChild(copyIconElement); // 添加新 <i> 标签
+                        copyIconElement.classList.add('copy-icon');
+                        button.appendChild(copyIconElement);
+                        lucide.createIcons({ container: button });
                         
                         button.classList.remove('copied');
-                        ipTextSpan.textContent = originalIpText; // 恢复原始文本
-
-                        // 重新创建按钮中的 Lucide 图标 (会把新加的 <i> 变成 <svg>)
-                        lucide.createIcons({ container: button });
-                    }, 2000); // 2秒后恢复
+                        ipTextSpan.textContent = originalIpText;
+                    }, 2000);
                 }).catch(err => {
                     console.error('无法复制 IP 地址: ', err);
                 });
@@ -944,7 +900,6 @@
                 element.innerHTML = `<i data-lucide="loader" class="animate-spin w-4 h-4 inline-block mr-1"></i>查询中...`;
                 lucide.createIcons({nodes: [element]});
                 try {
-                   // 更改为更稳定的 ip-api.com 端点
                    const geoRes = await fetch(`https://ip-api.com/json/${ip}?fields=61439&lang=zh-CN`);
                    const geoData = await geoRes.json();
                    if (geoData.status === 'success') {
@@ -959,8 +914,8 @@
             };
 
             const getLatencyColor = (latency) => {
-                if (latency === null || latency >= 4000) return '#ef4444'; // Red for high latency/error
-                const hue = 120 - (latency / 350) * 120; // 映射 0-350ms 到 120(green)-0(red) hue
+                if (latency === null || latency >= 4000) return '#ef4444';
+                const hue = 120 - (latency / 350) * 120;
                 return `hsl(${Math.max(0, hue)}, 80%, 55%)`;
             };
 
@@ -971,16 +926,13 @@
 
                 let latency;
                 try {
-                    // 使用 'no-cors' 模式的 fetch 来测量网络往返时间。
-                    // 即使请求因CORS被阻止或服务器无响应，所花费的时间也是一个有效的延迟指标。
                     await fetch(`https://${ip}`, { 
                         method: 'HEAD', 
                         mode: 'no-cors', 
                         cache: 'no-store', 
-                        signal: AbortSignal.timeout(4000) // 4秒超时
+                        signal: AbortSignal.timeout(4000)
                     });
                 } catch (e) {
-                    // 此处主要捕获超时错误。
                 } finally {
                     latency = Math.round(performance.now() - startTime);
                 }
@@ -1033,27 +985,24 @@
 
             const imageViewer = {
                 modal: document.getElementById('image-viewer-modal'),
-                imageElements: document.querySelectorAll('.image-viewer-img'), // Assumes 2 img elements exist
+                imageElements: document.querySelectorAll('.image-viewer-img'),
                 btnPrev: document.getElementById('btn-prev-image'),
                 btnNext: document.getElementById('btn-next-image'),
                 btnClose: document.getElementById('btn-close-viewer'),
-                toolbar: null, // Will be set in init
-                dotsContainer: null, // Will be created in init
+                toolbar: null,
+                dotsContainer: null,
                 imageList: [], 
                 currentIndex: 0, 
-                activeImageIndex: 0, // 0 or 1, corresponds to which imageElement is active
+                activeImageIndex: 0,
 
-                // Helper to load image and ensure onload fires consistently
                 loadImagePromise: (imgElement, src) => {
                     return new Promise((resolve, reject) => {
-                        // Clear any previous onload/onerror to prevent multiple calls
                         imgElement.onload = null; 
                         imgElement.onerror = null;
 
                         imgElement.onload = () => resolve(imgElement);
                         imgElement.onerror = () => reject(new Error(`Failed to load image: ${src}`));
                         imgElement.src = src;
-                        // Handle cached images: if already loaded, resolve immediately
                         if (imgElement.complete && imgElement.naturalHeight !== 0) {
                             resolve(imgElement);
                         }
@@ -1061,57 +1010,52 @@
                 },
                 
                 open(clickedImageSrc, contextElement) {
-                    // Collect all enlargeable images from the context element (e.g., carousel or wiki content)
                     this.imageList = Array.from(contextElement.querySelectorAll('.enlargeable-image')).map(el => el.dataset.src || el.src);
                     this.currentIndex = this.imageList.findIndex(src => src === clickedImageSrc);
                     if (this.currentIndex === -1) {
                         console.warn("Clicked image not found in context's image list.");
-                        return; // Image not found in the list, do nothing
+                        return;
                     }
 
                     this.modal.classList.remove('modal-hidden');
                     document.body.style.overflow = 'hidden';
 
-                    // Initialize the two image elements for cross-fading
-                    this.activeImageIndex = 0; // Start with the first img element as the active one
+                    this.activeImageIndex = 0;
                     this.imageElements[0].classList.add('active');
                     this.imageElements[1].classList.remove('active');
 
-                    this.loadCurrentImage(true); // Load the first image (isFirstLoad = true)
-                    this.updateDots(); // Initial dots update
+                    this.loadCurrentImage(true);
+                    this.updateDots();
                 },
 
                 close() { 
                     this.modal.classList.add('modal-hidden'); 
                     document.body.style.overflow = ''; 
-                    // Reset active classes and image sources
                     this.imageElements.forEach(img => {
                         img.classList.remove('active');
-                        img.src = ''; // Clear image src
+                        img.src = '';
                         this.resetImageTransform(img);
                     });
-                    this.dotsContainer.innerHTML = ''; // Clear dots
+                    this.dotsContainer.innerHTML = '';
                 },
 
                 loadCurrentImage(isFirstLoad = false) {
                     const currentActiveImg = this.imageElements[this.activeImageIndex];
-                    const targetImg = this.imageElements[1 - this.activeImageIndex]; // The one to load the new image into
+                    const targetImg = this.imageElements[1 - this.activeImageIndex];
                     const newSrc = this.imageList[this.currentIndex];
 
-                    this.resetImageTransform(targetImg); // Reset transform before loading new image
+                    this.resetImageTransform(targetImg);
 
                     this.loadImagePromise(targetImg, newSrc)
                         .then(() => {
-                            // Image successfully loaded into targetImg
-                            currentActiveImg.classList.remove('active'); // Hide old active image
-                            targetImg.classList.add('active'); // Show new image
-                            this.activeImageIndex = 1 - this.activeImageIndex; // Flip active index
+                            currentActiveImg.classList.remove('active');
+                            targetImg.classList.add('active');
+                            this.activeImageIndex = 1 - this.activeImageIndex;
                             this.updateNavButtons();
-                            this.updateDots(); // Update dots after successful load and switch
+                            this.updateDots();
                         })
                         .catch(error => {
                             console.error("Image loading error:", error);
-                            // Fallback to error image
                             targetImg.src = 'https://placehold.co/1200x800/1f2937/9ca3af?text=Image+Load+Error';
                             currentActiveImg.classList.remove('active');
                             targetImg.classList.add('active');
@@ -1125,7 +1069,7 @@
                     const newIndex = this.currentIndex + direction; 
                     if (newIndex >= 0 && newIndex < this.imageList.length) { 
                         this.currentIndex = newIndex; 
-                        this.loadCurrentImage(); // Load the new image
+                        this.loadCurrentImage();
                     } 
                 },
 
@@ -1142,25 +1086,24 @@
 
                 updateDots() {
                     if (!this.dotsContainer) return;
-                    this.dotsContainer.innerHTML = ''; // Clear existing dots
-                    if (this.imageList.length > 1) { // Only show dots if there's more than one image
+                    this.dotsContainer.innerHTML = '';
+                    if (this.imageList.length > 1) {
                         this.imageList.forEach((_, i) => {
                             const dot = document.createElement('button');
                             dot.className = `carousel-dot w-3 h-3 rounded-full transition-all duration-300 ${i === this.currentIndex ? 'active-viewer-dot' : ''}`;
                             dot.dataset.index = i;
-                            dot.addEventListener('click', () => this.navigate(i - this.currentIndex)); // Navigate by difference
+                            dot.addEventListener('click', () => this.navigate(i - this.currentIndex));
                             this.dotsContainer.appendChild(dot);
                         });
                         this.dotsContainer.classList.remove('hidden');
                     } else {
-                        this.dotsContainer.classList.add('hidden'); // Hide dots if only one image
+                        this.dotsContainer.classList.add('hidden');
                     }
                 },
 
                 init() {
                     this.btnClose.addEventListener('click', () => this.close());
                     this.modal.addEventListener('click', (e) => { 
-                        // Close if clicking outside modal content or on modal background
                         if (e.target.classList.contains('modal-box') || e.target.id === 'image-viewer-modal') {
                             this.close(); 
                         }
@@ -1172,16 +1115,14 @@
                     document.getElementById('btn-rotate-left').addEventListener('click', () => this.rotate(-90));
                     document.getElementById('btn-rotate-right').addEventListener('click', () => this.rotate(90));
                     
-                    // Add dots container to toolbar
                     this.toolbar = document.getElementById('image-viewer-toolbar');
                     if (this.toolbar) {
                         this.dotsContainer = document.createElement('div');
                         this.dotsContainer.id = 'image-viewer-dots';
-                        this.dotsContainer.className = 'flex space-x-2 absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50'; // Added z-index for visibility
-                        this.toolbar.parentNode.insertBefore(this.dotsContainer, this.toolbar.nextSibling); // Insert after toolbar
+                        this.dotsContainer.className = 'flex space-x-2 absolute left-1/2 bottom-2 transform -translate-x-1/2 z-50';
+                        this.toolbar.parentNode.insertBefore(this.dotsContainer, this.toolbar.nextSibling);
                     }
 
-                    // Drag functionality
                     let isDragging = false, startPos = { x: 0, y: 0 };
                     this.modal.addEventListener('mousedown', (e) => { 
                         const img = this.getCurrentImage(); 
@@ -1213,9 +1154,9 @@
 
             const galleryCarousel = {
                 container: document.getElementById('gallery-carousel'),
-                slides: [], // Will store slide data
-                currentIndex: 0, // Current active slide index
-                timer: null, // Autoplay timer
+                slides: [],
+                currentIndex: 0,
+                timer: null,
 
                 async init() {
                     const data = await fetchData('./gallery/gallery.json');
@@ -1267,9 +1208,8 @@
                         }
                     });
                     this.inner.addEventListener('click', (e) => { 
-                        const targetElement = e.target.closest('.enlargeable-image'); // This will be the div with background-image
+                        const targetElement = e.target.closest('.enlargeable-image');
                         if (targetElement) {
-                            // Pass the data-src (or src if it were an img tag directly) to imageViewer
                             imageViewer.open(targetElement.dataset.src || targetElement.src, this.inner); 
                         }
                     });
@@ -1516,7 +1456,6 @@
 
             const toggleSimpleModal = (modal, show) => { if (modal) modal.classList.toggle('modal-hidden', !show); };
 
-            // --- Initial Setup & Event Listeners ---
             function init() {
                 imageViewer.init();
                 galleryCarousel.init();
@@ -1524,26 +1463,9 @@
                 document.getElementById('btn-faq').addEventListener('click', () => toggleSimpleModal(document.getElementById('faq-modal'), true));
                 document.querySelectorAll('.modal-bg, .btn-close-modal').forEach(el => el.addEventListener('click', (e) => toggleSimpleModal(e.target.closest('.modal'), false)));
                 
-                // 移除了波纹点击效果的事件监听器
-                /*
-                document.body.addEventListener('click', e => {
-                    const button = e.target.closest('button, .menu-item');
-                    if (button && !button.classList.contains('ip-copy-btn')) {
-                        const rect = button.getBoundingClientRect();
-                        const ripple = document.createElement('span');
-                        ripple.className = 'ripple-effect';
-                        ripple.style.left = `${e.clientX - rect.left}px`;
-                        ripple.style.top = `${e.clientY - rect.top}px`;
-                        button.appendChild(ripple);
-                        setTimeout(() => ripple.remove(), 600);
-                    }
-                });
-                */
-
                 pageContainer.addEventListener('click', (e) => {
                     const targetImage = e.target.closest('.enlargeable-image');
                     if (targetImage) {
-                        // 确保从 data-src 或 src 获取正确的图片 URL
                         imageViewer.open(targetImage.dataset.src || targetImage.src, pageContainer);
                     }
                 });
