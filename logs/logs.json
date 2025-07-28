@@ -1,5 +1,39 @@
 [
   {
+    "title": "更新日志 1.1.0",
+    "date": "2025-07-28",
+    "content": [
+      {
+        "type": "add",
+        "title": "新增内容",
+        "items": [
+          "新增“[机械动力：伪装方块+] copycats-3.0.2+mc.1.21.1-neoforge”模组。",
+          "新增“DistantHorizons-2.3.4-b-1.21.1-fabric-neoforge”模组。"
+        ]
+      },
+      {
+        "type": "change",
+        "title": "整合包内容变更",
+        "items": [
+          "将“精妙核心”更新至“1.21.1-1.3.58.1051”。",
+          "将“moonlight”更新至“1.21-2.20.7-neoforge”。"
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "icon": "file-stack",
+        "text": "[机械动力：伪装方块+] copycats-3.0.2 mc.1.21.1-neoforge.jar",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/6/%5B%E6%9C%BA%E6%A2%B0%E5%8A%A8%E5%8A%9B%EF%BC%9A%E4%BC%AA%E8%A3%85%E6%96%B9%E5%9D%97%20%5D%20copycats-3.0.2%20mc.1.21.1-neoforge.jar"
+      },
+      {
+        "icon": "file-stack",
+        "text": "DistantHorizons-2.3.4-b-1.21.1-fabric-neoforge.jar",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/6/DistantHorizons-2.3.4-b-1.21.1-fabric-neoforge.jar"
+      }
+    ]
+  },
+  {
     "title": "更新日志 1.0.9",
     "date": "2025-07-26",
     "content": [
@@ -13,7 +47,7 @@
           "将“FTB Library”更新至“neoforge-2101.1.18”。",
           "将“粒子雨”更新至“4.0.0-alpha.3+1.21.1-neoforge”。",
           "将“输入法冲突修复”更新至“5.4.1.1-neoforge-1.20.6+”。",
-          "将“物理声效重制版”更新至“neoforge-1.21.1-1.4.15”。",
+          "将“物理声效重制版”更新至“neoforge-1.21.1-1.4.15”。"
         ]
       }
     ]
