@@ -1,6 +1,18 @@
 [
     {
     "title": "主要资源",
+    "date": "2025-07-31",
+    "description": "完整的模组导出；修复版-β。",
+    "buttons": [
+      {
+        "icon": "folder-archive",
+        "text": "The Origin 1.1.0-fix-beta",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/7/The%20Origin%202.0%201.1.0-fix-beta.zip"
+      }
+    ]
+  },
+  {
+    "title": "主要资源",
     "date": "2025-07-28",
     "description": "日常维护、更新资源。",
     "buttons": [
