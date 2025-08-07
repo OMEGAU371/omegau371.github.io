@@ -1,5 +1,17 @@
 [
-    {
+  {
+    "title": "主要资源",
+    "date": "2025-07-31",
+    "description": "完整的模组导出；修复版-γ。",
+    "buttons": [
+      {
+        "icon": "folder-archive",
+        "text": "The Origin 1.1.1-fix-gamma",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/6/The%20Origin%202.0%201.1.1-fix.zip"
+      }
+    ]
+  },
+  {
     "title": "主要资源",
     "date": "2025-07-31",
     "description": "完整的模组导出；修复版-β。",
@@ -83,3 +95,4 @@
     ]
   }
 ]
+
