@@ -1,6 +1,23 @@
 [
   {
     "title": "主要资源",
+    "date": "2025-08-19",
+    "description": "新生 - Newborn 1.0.0",
+    "buttons": [
+      {
+        "icon": "blocks",
+        "text": "新生 - Newborn 1.0.0.zip",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/8/%E6%96%B0%E7%94%9F%20-%20Newborn%201.0.0.zip"
+      },
+      {
+        "icon": "languages",
+        "text": "译作重质-新生 V1.0",
+        "link": "https://gitee.com/omegau371/resource-package-hosting/releases/download/8/%E8%AF%91%E4%BD%9C%E9%87%8D%E8%B4%A8-%E6%96%B0%E7%94%9F%20V1.0.zip"
+      }
+    ]
+  },
+  {
+    "title": "主要资源",
     "date": "2025-08-07",
     "description": "完整的模组导出；修复版-γ。",
     "buttons": [
@@ -95,5 +112,6 @@
     ]
   }
 ]
+
 
 
